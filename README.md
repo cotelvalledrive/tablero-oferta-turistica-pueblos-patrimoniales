@@ -20,5 +20,6 @@ Cuando GitHub Pages esté activo, el tablero quedará disponible en:
 El mapa fue generado a partir de la Base oficial del piloto de Buga.
 
 - Municipio: Guadalajara de Buga, Valle del Cauca.
-- Registros publicados: 402.
+- Registros publicados: 413.
 - Criterio de inclusión: `decision_propuesta = Incluir`.
+- Incluye 11 registros adicionados por validación del cliente.
