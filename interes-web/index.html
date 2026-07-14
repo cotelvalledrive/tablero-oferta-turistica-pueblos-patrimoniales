@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Interés potencial por búsquedas web - Buga</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     :root {
       --bg:#f7faf9; --panel:#ffffff; --ink:#10202a; --muted:#64767f; --line:#dce8e8;
@@ -45,6 +46,7 @@
     .flat { color:#7c5a00; background:#fef3c7; }
     .international { background:linear-gradient(135deg,#ffffff,#f3fbf8); border-left:5px solid var(--teal); }
     .muted { color:var(--muted); font-size:12px; }
+    canvas { width:100% !important; max-height:360px; }
     footer { color:var(--muted); font-size:12px; margin-top:24px; }
     @media (max-width:1050px) { .cards,.grid { grid-template-columns:1fr; } main { padding:18px; } header { padding:24px 20px; } .bar-row { grid-template-columns:1fr; } }
   </style>
@@ -126,7 +128,20 @@
       </article>
       <article class="panel">
         <h3>Lectura por término</h3>
-        <table><thead><tr><th class="">Término</th><th class="">Grupo</th><th class="num">Prom. 2022 a julio de 2026</th><th class="num">Prom. último año</th><th class="">Lectura</th></tr></thead><tbody><tr><td class="">Buga Valle</td><td class="">Destino</td><td class="num">61.5</td><td class="num">64.4</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">Guadalajara de Buga</td><td class="">Destino</td><td class="num">15.6</td><td class="num">20.4</td><td class=""><span class="badge up">Aumenta</span></td></tr><tr><td class="">Señor de los Milagros Buga</td><td class="">Religioso</td><td class="num">16.3</td><td class="num">19.4</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">milagroso de Buga</td><td class="">Religioso</td><td class="num">4.0</td><td class="num">4.1</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">Basílica de Buga</td><td class="">Religioso</td><td class="num">1.4</td><td class="num">2.5</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">hoteles en Buga</td><td class="">Servicios</td><td class="num">1.3</td><td class="num">0.7</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">Semana Santa Buga</td><td class="">Religioso</td><td class="num">0.4</td><td class="num">0.4</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">Buga turismo</td><td class="">Destino</td><td class="num">0.1</td><td class="num">0.1</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr></tbody></table>
+        <table><thead><tr><th class="">Término</th><th class="">Grupo</th><th class="num">Prom. 2022 a julio de 2026</th><th class="num">Prom. último año</th><th class="num">Variación puntos</th><th class="num">Variación %</th><th class="">Lectura</th></tr></thead><tbody><tr><td class="">Buga Valle</td><td class="">Destino</td><td class="num">61.5</td><td class="num">64.4</td><td class="num">2.9</td><td class="num">4.7%</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">Guadalajara de Buga</td><td class="">Destino</td><td class="num">15.6</td><td class="num">20.4</td><td class="num">4.8</td><td class="num">30.6%</td><td class=""><span class="badge up">Aumenta</span></td></tr><tr><td class="">Señor de los Milagros Buga</td><td class="">Religioso</td><td class="num">16.3</td><td class="num">19.4</td><td class="num">3.1</td><td class="num">18.9%</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">milagroso de Buga</td><td class="">Religioso</td><td class="num">4.0</td><td class="num">4.1</td><td class="num">0.0</td><td class="num">0.6%</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">Basílica de Buga</td><td class="">Religioso</td><td class="num">1.4</td><td class="num">2.5</td><td class="num">1.0</td><td class="num">71.5%</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">hoteles en Buga</td><td class="">Servicios</td><td class="num">1.3</td><td class="num">0.7</td><td class="num">-0.6</td><td class="num">-44.8%</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">Semana Santa Buga</td><td class="">Religioso</td><td class="num">0.4</td><td class="num">0.4</td><td class="num">-0.0</td><td class="num">-8.8%</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr><tr><td class="">Buga turismo</td><td class="">Destino</td><td class="num">0.1</td><td class="num">0.1</td><td class="num">0.1</td><td class="num">103.3%</td><td class=""><span class="badge flat">Estable o cambio leve</span></td></tr></tbody></table>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h3>Serie de tiempo nacional</h3>
+        <canvas id="timeChart"></canvas>
+        <p class="muted">Promedio mensual para suavizar la lectura semanal de Google Trends.</p>
+      </article>
+      <article class="panel">
+        <h3>Estacionalidad mensual nacional</h3>
+        <canvas id="seasonChart"></canvas>
+        <p class="muted">Promedio por mes para el término líder: Buga Valle.</p>
       </article>
     </section>
 
@@ -258,5 +273,59 @@
 
     <footer>Producto 3 · Piloto Buga · Google Trends nacional e internacional · Corte: julio de 2026.</footer>
   </main>
+  <script>
+    const CHART_DATA = {"monthly": {"labels": ["2021-12", "2022-01", "2022-02", "2022-03", "2022-04", "2022-05", "2022-06", "2022-07", "2022-08", "2022-09", "2022-10", "2022-11", "2022-12", "2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06", "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07"], "series": [{"label": "Buga Valle", "data": [70.0, 73.0, 56.8, 62.5, 71.2, 59.8, 65.5, 71.0, 71.0, 60.0, 58.8, 51.8, 64.8, 82.4, 63.2, 66.0, 69.0, 59.5, 71.8, 71.8, 66.5, 61.2, 73.0, 63.0, 76.6, 79.5, 57.8, 64.8, 51.2, 52.8, 60.6, 57.5, 59.8, 59.6, 55.8, 56.8, 65.8, 67.0, 50.2, 48.8, 58.5, 50.0, 48.8, 56.8, 53.6, 50.8, 53.2, 54.8, 60.8, 66.8, 52.5, 64.8, 52.8, 54.4, 53.0, 49.0]}, {"label": "Guadalajara de Buga", "data": [12.0, 13.8, 16.8, 18.0, 17.0, 13.4, 13.0, 15.8, 14.0, 12.2, 13.6, 12.2, 13.2, 16.0, 15.5, 16.0, 13.2, 12.8, 15.5, 15.2, 12.0, 12.5, 15.6, 13.8, 17.2, 14.0, 16.8, 17.0, 14.2, 15.5, 14.6, 13.5, 15.2, 15.0, 16.0, 16.2, 18.0, 16.0, 17.8, 15.8, 15.2, 15.5, 15.6, 19.2, 16.8, 16.5, 17.5, 16.0, 20.0, 22.0, 19.2, 18.6, 17.8, 16.4, 14.8, 15.0]}, {"label": "Señor de los Milagros Buga", "data": [14.0, 20.4, 17.0, 14.5, 18.5, 14.0, 14.0, 14.8, 15.8, 28.0, 15.6, 14.8, 14.2, 18.6, 17.0, 15.2, 16.8, 12.8, 15.2, 16.4, 14.5, 27.8, 14.6, 14.0, 18.8, 20.0, 14.8, 17.4, 14.2, 12.2, 14.0, 16.0, 15.8, 21.0, 15.0, 13.8, 13.8, 17.5, 13.0, 13.2, 17.2, 12.0, 13.4, 15.8, 16.8, 28.0, 14.5, 13.4, 15.8, 19.8, 16.8, 17.8, 14.8, 14.8, 16.2, 13.0]}, {"label": "milagroso de Buga", "data": [11.0, 3.4, 4.2, 2.8, 5.0, 4.2, 2.8, 3.8, 5.5, 6.0, 5.0, 4.5, 3.2, 5.8, 4.8, 3.2, 4.8, 4.2, 5.0, 3.8, 6.0, 7.0, 4.4, 4.8, 7.2, 6.8, 4.5, 4.2, 5.8, 1.0, 3.4, 2.8, 3.0, 4.6, 4.0, 4.0, 2.8, 3.5, 2.8, 1.2, 3.2, 1.0, 4.4, 3.0, 4.4, 4.5, 4.0, 1.0, 4.0, 5.0, 5.5, 2.8, 1.8, 3.2, 4.0, 5.0]}, {"label": "Basílica de Buga", "data": [0.0, 0.0, 0.0, 1.5, 3.5, 0.6, 1.2, 1.6, 3.8, 1.5, 0.8, 0.0, 1.0, 1.0, 0.0, 1.2, 2.8, 2.0, 1.0, 0.0, 1.0, 0.8, 0.6, 1.0, 2.2, 2.8, 0.0, 1.4, 1.2, 1.0, 0.8, 1.0, 3.5, 0.0, 1.2, 1.2, 1.4, 2.5, 1.2, 0.0, 2.2, 1.2, 0.0, 1.2, 2.2, 1.5, 2.5, 0.0, 3.8, 5.2, 1.2, 3.8, 2.8, 0.0, 3.0, 3.0]}, {"label": "hoteles en Buga", "data": [10.0, 4.2, 1.0, 4.0, 4.8, 0.6, 4.0, 1.2, 3.2, 1.2, 3.6, 1.2, 0.0, 3.6, 0.0, 2.2, 0.8, 1.8, 3.2, 3.4, 0.0, 1.0, 1.0, 1.0, 1.8, 1.5, 0.0, 0.0, 0.0, 0.0, 1.8, 1.0, 0.0, 1.0, 1.2, 0.0, 3.2, 1.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 2.2, 0.0, 0.0, 0.0, 1.2, 0.0, 1.0, 0.0, 1.8, 1.2, 2.0]}]}, "season": {"term": "Buga Valle", "labels": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"], "data": [74.5, 56.79, 63.5, 60.84, 56.74, 59.69, 64.04, 62.05, 58.1, 60.86, 57.91, 67.91]}};
+    const palette = ["#2f8f83", "#587aa7", "#d9a441", "#b85b5b", "#6d7d8c", "#8c6bb1"];
+
+    function drawTimeChart() {
+      const canvas = document.getElementById("timeChart");
+      if (!canvas || typeof Chart === "undefined") return;
+      new Chart(canvas, {
+        type: "line",
+        data: {
+          labels: CHART_DATA.monthly.labels,
+          datasets: CHART_DATA.monthly.series.map((serie, i) => ({
+            label: serie.label,
+            data: serie.data,
+            borderColor: palette[i % palette.length],
+            backgroundColor: palette[i % palette.length],
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.25
+          }))
+        },
+        options: {
+          responsive: true,
+          interaction: { mode: "index", intersect: false },
+          plugins: { legend: { position: "bottom" } },
+          scales: { y: { beginAtZero: true, title: { display: true, text: "Índice Google Trends" } } }
+        }
+      });
+    }
+
+    function drawSeasonChart() {
+      const canvas = document.getElementById("seasonChart");
+      if (!canvas || typeof Chart === "undefined") return;
+      new Chart(canvas, {
+        type: "bar",
+        data: {
+          labels: CHART_DATA.season.labels,
+          datasets: [{
+            label: CHART_DATA.season.term,
+            data: CHART_DATA.season.data,
+            backgroundColor: "#d9a441"
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, title: { display: true, text: "Promedio relativo" } } }
+        }
+      });
+    }
+
+    drawTimeChart();
+    drawSeasonChart();
+  </script>
 </body>
 </html>
