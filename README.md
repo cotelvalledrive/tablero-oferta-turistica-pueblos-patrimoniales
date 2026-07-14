@@ -1,25 +1,22 @@
-# Tablero de oferta turística - Pueblos Patrimoniales
+# Tablero integral - Piloto Buga
 
-Este repositorio publica un tablero web estático para visualizar la oferta turística oficial del piloto de Buga.
+Este repositorio publica los tableros web estáticos del piloto de Guadalajara de Buga.
+
+## Rutas principales
+
+- Tablero integral: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/`
+- Oferta turística: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/oferta/`
+- Análisis de reseñas: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/resenas/`
+- Interés potencial por búsquedas web: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/interes-web/`
+- Arquetipos de turistas: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/arquetipos/`
 
 ## Contenido
 
-- `index.html`: tablero/mapa interactivo.
-- `.nojekyll`: archivo de configuración para que GitHub Pages publique los archivos sin procesarlos.
+- `arquetipos/`: tablero ejecutivo de arquetipos de turistas potenciales.
 
-## Publicación
-
-El sitio está preparado para publicarse con GitHub Pages desde la rama `main` y la carpeta raíz `/root`.
-
-Cuando GitHub Pages esté activo, el tablero quedará disponible en:
-
-`https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/`
-
-## Fuente de datos
-
-El mapa fue generado a partir de la Base oficial del piloto de Buga.
-
-- Municipio: Guadalajara de Buga, Valle del Cauca.
-- Registros publicados: 413.
-- Criterio de inclusión: `decision_propuesta = Incluir`.
-- Incluye 11 registros adicionados por validación del cliente.
+- `index.html`: tablero integral con pestañas.
+- `oferta/`: mapa e inventario oficial.
+- `resenas/`: tablero de reseñas.
+- `interes-web/`: tablero de Google Trends.
+- `arquetipos/`: tablero ejecutivo de perfiles de turistas.
+- `.nojekyll`: configuración para GitHub Pages.
