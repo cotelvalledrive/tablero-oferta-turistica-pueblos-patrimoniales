@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interés potencial por búsquedas web - Buga</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --panel: #ffffff;
+      --ink: #10202a;
+      --muted: #64767f;
+      --line: #dce8e8;
+      --teal: #2f8f83;
+      --blue: #587aa7;
+      --amber: #d9a441;
+      --red: #b85b5b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    header {
+      padding: 28px 32px 20px;
+      color: white;
+      background: linear-gradient(135deg, #1f766f, #253c63);
+    }
+    h1 { margin: 0; font-size: 30px; letter-spacing: -0.03em; }
+    header p { max-width: 1050px; margin: 8px 0 0; color: #e8f3f5; line-height: 1.5; }
+    main { padding: 22px 32px 42px; }
+    .grid { display: grid; gap: 16px; }
+    .cards { grid-template-columns: repeat(6, minmax(140px, 1fr)); }
+    .two { grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr); margin-top: 16px; }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 16px; }
+    .card, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(16, 32, 42, 0.06);
+    }
+    .card { padding: 16px; }
+    .card .value { font-size: 25px; font-weight: 850; letter-spacing: -0.04em; }
+    .card .label { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .panel { padding: 18px; min-width: 0; }
+    .panel h2 { margin: 0 0 10px; font-size: 18px; letter-spacing: -0.02em; }
+    .panel p { color: var(--muted); line-height: 1.5; margin: 6px 0 0; }
+    canvas { width: 100% !important; max-height: 380px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #f3f7f7; color: #29434c; font-size: 12px; }
+    td.num, th.num { text-align: right; }
+    .pill { display: inline-flex; padding: 4px 8px; border-radius: 999px; font-weight: 760; font-size: 12px; }
+    .up { color: #166534; background: #dcfce7; }
+    .down { color: #991b1b; background: #fee2e2; }
+    .flat { color: #7c5a00; background: #fef3c7; }
+    .note { border-left: 4px solid var(--amber); background: #fff9e8; }
+    .pending { columns: 2; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .small { color: var(--muted); font-size: 12px; line-height: 1.45; }
+    @media (max-width: 1180px) {
+      .cards { grid-template-columns: repeat(3, 1fr); }
+      .two, .three { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      header, main { padding-left: 18px; padding-right: 18px; }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Interés potencial por búsquedas web - Buga</h1>
+    <p>Lectura ejecutiva de Google Trends para entender señales de interés potencial hacia Buga. Los valores son índices relativos de búsqueda, no conteos absolutos de personas ni de búsquedas.</p>
+  </header>
+  <main>
+    <section class="grid cards" id="cards"></section>
+
+    <section class="grid two">
+      <article class="panel">
+        <h2>Evolución del interés en el tiempo</h2>
+        <canvas id="lineChart"></canvas>
+        <p class="small">Serie mensual promedio para suavizar la lectura semanal.</p>
+      </article>
+      <article class="panel">
+        <h2>Promedio de interés por término</h2>
+        <canvas id="avgChart"></canvas>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <article class="panel">
+        <h2>Último año vs periodo anterior</h2>
+        <canvas id="changeChart"></canvas>
+        <p class="small">Compara julio de 2025-julio de 2026 contra enero de 2022-julio de 2025 para los términos disponibles.</p>
+      </article>
+      <article class="panel">
+        <h2>Estacionalidad mensual</h2>
+        <canvas id="seasonChart"></canvas>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <article class="panel">
+        <h2>Departamentos con mayor interés</h2>
+        <canvas id="departmentChart"></canvas>
+        <p class="small">Lectura territorial para el término dominante del tablero.</p>
+      </article>
+      <article class="panel">
+        <h2>Notas de cobertura</h2>
+        <div id="coverageNotes"></div>
+      </article>
+    </section>
+
+    <section class="panel" style="margin-top:16px">
+      <h2>Lectura por término</h2>
+      <div id="summaryTable"></div>
+    </section>
+
+    <section class="grid two" style="margin-top:16px">
+      <article class="panel">
+        <h2>Top queries</h2>
+        <p class="small">Consultas relacionadas con mayor interés relativo. El puntaje va de 0 a 100 dentro de cada término base.</p>
+        <div id="topQueriesTable"></div>
+      </article>
+      <article class="panel">
+        <h2>Rising queries</h2>
+        <p class="small">Consultas relacionadas que más crecieron. “Breakout” significa crecimiento muy alto desde una base baja.</p>
+        <div id="risingQueriesTable"></div>
+      </article>
+    </section>
+
+    <section class="grid three">
+      <article class="panel note">
+        <h2>Cómo leer este tablero</h2>
+        <p><strong>100</strong> no significa 100 búsquedas; significa el punto de mayor interés relativo dentro de la consulta de Google Trends. Los demás valores se leen en relación con ese máximo.</p>
+        <p>Por eso el tablero sirve para ver tendencia, fuerza relativa, picos y señales de mercado, no para estimar cantidad exacta de turistas.</p>
+      </article>
+      <article class="panel">
+        <h2>Señal baja en búsquedas turísticas explícitas</h2>
+        <p id="lowSignal"></p>
+        <p class="small">Esto no significa que no exista turismo; significa que esas frases específicas tienen poca presencia relativa frente a búsquedas de destino como “Buga Valle”.</p>
+      </article>
+      <article class="panel">
+        <h2>Términos pendientes</h2>
+        <div class="pending" id="pendingTerms"></div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const DATA = {"metrics":{"termsWithData":6,"totalTerms":18,"records":5220,"dominantTerm":"Buga Valle","dominantAvg":62.0,"recentLeader":"Buga Valle","recentLeaderAvg":60.2,"peakTerm":"Buga Valle","peakValue":100.0,"peakDate":"2023-10-29","bestMonth":"Ene","bestMonthTerm":"Buga Valle","bestMonthValue":74.5,"topDepartment":"Valle del Cauca"},"summary":[{"termino":"Buga Valle","promedio_2022_hoy":62.0,"promedio_ultimo_anio":60.2,"promedio_2022_antes_ultimo_anio":63.0,"cambio_abs":-2.8,"cambio_pct":-4.5,"lectura":"Estable / cambio leve","pico_interes":100.0,"fecha_pico":"2023-10-29","semanas_con_interes_pct":100.0},{"termino":"Señor de los Milagros Buga","promedio_2022_hoy":16.9,"promedio_ultimo_anio":18.2,"promedio_2022_antes_ultimo_anio":16.1,"cambio_abs":2.0,"cambio_pct":12.6,"lectura":"Estable / cambio leve","pico_interes":52.0,"fecha_pico":"2023-09-10","semanas_con_interes_pct":100.0},{"termino":"Guadalajara de Buga","promedio_2022_hoy":16.5,"promedio_ultimo_anio":19.1,"promedio_2022_antes_ultimo_anio":15.1,"cambio_abs":4.1,"cambio_pct":26.9,"lectura":"Aumenta","pico_interes":43.0,"fecha_pico":"2026-01-11","semanas_con_interes_pct":100.0},{"termino":"milagroso de Buga","promedio_2022_hoy":4.0,"promedio_ultimo_anio":3.7,"promedio_2022_antes_ultimo_anio":4.2,"cambio_abs":-0.5,"cambio_pct":-10.8,"lectura":"Estable / cambio leve","pico_interes":12.0,"fecha_pico":"2023-09-10","semanas_con_interes_pct":69.9},{"termino":"Basílica de Buga","promedio_2022_hoy":1.6,"promedio_ultimo_anio":2.4,"promedio_2022_antes_ultimo_anio":1.2,"cambio_abs":1.2,"cambio_pct":99.6,"lectura":"Estable / cambio leve","pico_interes":16.0,"fecha_pico":"2026-03-29","semanas_con_interes_pct":30.4},{"termino":"hoteles en Buga","promedio_2022_hoy":1.2,"promedio_ultimo_anio":0.7,"promedio_2022_antes_ultimo_anio":1.5,"cambio_abs":-0.8,"cambio_pct":-51.4,"lectura":"Estable / cambio leve","pico_interes":15.0,"fecha_pico":"2022-01-02","semanas_con_interes_pct":22.8}],"monthly":[{"mes":"2022-01","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2022-01","termino":"Buga Valle","interes_google":73.0},{"mes":"2022-01","termino":"Guadalajara de Buga","interes_google":13.8},{"mes":"2022-01","termino":"Señor de los Milagros Buga","interes_google":20.4},{"mes":"2022-01","termino":"hoteles en Buga","interes_google":4.2},{"mes":"2022-01","termino":"milagroso de Buga","interes_google":3.4},{"mes":"2022-02","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2022-02","termino":"Buga Valle","interes_google":56.8},{"mes":"2022-02","termino":"Guadalajara de Buga","interes_google":16.8},{"mes":"2022-02","termino":"Señor de los Milagros Buga","interes_google":17.0},{"mes":"2022-02","termino":"hoteles en Buga","interes_google":1.0},{"mes":"2022-02","termino":"milagroso de Buga","interes_google":4.2},{"mes":"2022-03","termino":"Basílica de Buga","interes_google":1.5},{"mes":"2022-03","termino":"Buga Valle","interes_google":62.5},{"mes":"2022-03","termino":"Guadalajara de Buga","interes_google":18.0},{"mes":"2022-03","termino":"Señor de los Milagros Buga","interes_google":14.5},{"mes":"2022-03","termino":"hoteles en Buga","interes_google":4.0},{"mes":"2022-03","termino":"milagroso de Buga","interes_google":2.8},{"mes":"2022-04","termino":"Basílica de Buga","interes_google":3.5},{"mes":"2022-04","termino":"Buga Valle","interes_google":71.2},{"mes":"2022-04","termino":"Guadalajara de Buga","interes_google":17.0},{"mes":"2022-04","termino":"Señor de los Milagros Buga","interes_google":18.5},{"mes":"2022-04","termino":"hoteles en Buga","interes_google":4.8},{"mes":"2022-04","termino":"milagroso de Buga","interes_google":5.0},{"mes":"2022-05","termino":"Basílica de Buga","interes_google":0.6},{"mes":"2022-05","termino":"Buga Valle","interes_google":59.8},{"mes":"2022-05","termino":"Guadalajara de Buga","interes_google":13.4},{"mes":"2022-05","termino":"Señor de los Milagros Buga","interes_google":14.0},{"mes":"2022-05","termino":"hoteles en Buga","interes_google":0.6},{"mes":"2022-05","termino":"milagroso de Buga","interes_google":4.2},{"mes":"2022-06","termino":"Basílica de Buga","interes_google":1.2},{"mes":"2022-06","termino":"Buga Valle","interes_google":65.5},{"mes":"2022-06","termino":"Guadalajara de Buga","interes_google":13.0},{"mes":"2022-06","termino":"Señor de los Milagros Buga","interes_google":14.0},{"mes":"2022-06","termino":"hoteles en Buga","interes_google":4.0},{"mes":"2022-06","termino":"milagroso de Buga","interes_google":2.8},{"mes":"2022-07","termino":"Basílica de Buga","interes_google":1.6},{"mes":"2022-07","termino":"Buga Valle","interes_google":71.0},{"mes":"2022-07","termino":"Guadalajara de Buga","interes_google":15.8},{"mes":"2022-07","termino":"Señor de los Milagros Buga","interes_google":14.8},{"mes":"2022-07","termino":"hoteles en Buga","interes_google":1.2},{"mes":"2022-07","termino":"milagroso de Buga","interes_google":3.8},{"mes":"2022-08","termino":"Basílica de Buga","interes_google":3.8},{"mes":"2022-08","termino":"Buga Valle","interes_google":71.0},{"mes":"2022-08","termino":"Guadalajara de Buga","interes_google":14.0},{"mes":"2022-08","termino":"Señor de los Milagros Buga","interes_google":15.8},{"mes":"2022-08","termino":"hoteles en Buga","interes_google":3.2},{"mes":"2022-08","termino":"milagroso de Buga","interes_google":5.5},{"mes":"2022-09","termino":"Basílica de Buga","interes_google":1.5},{"mes":"2022-09","termino":"Buga Valle","interes_google":60.0},{"mes":"2022-09","termino":"Guadalajara de Buga","interes_google":12.2},{"mes":"2022-09","termino":"Señor de los Milagros Buga","interes_google":28.0},{"mes":"2022-09","termino":"hoteles en Buga","interes_google":1.2},{"mes":"2022-09","termino":"milagroso de Buga","interes_google":6.0},{"mes":"2022-10","termino":"Basílica de Buga","interes_google":0.8},{"mes":"2022-10","termino":"Buga Valle","interes_google":58.8},{"mes":"2022-10","termino":"Guadalajara de Buga","interes_google":13.6},{"mes":"2022-10","termino":"Señor de los Milagros Buga","interes_google":15.6},{"mes":"2022-10","termino":"hoteles en Buga","interes_google":3.6},{"mes":"2022-10","termino":"milagroso de Buga","interes_google":5.0},{"mes":"2022-11","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2022-11","termino":"Buga Valle","interes_google":51.8},{"mes":"2022-11","termino":"Guadalajara de Buga","interes_google":12.2},{"mes":"2022-11","termino":"Señor de los Milagros Buga","interes_google":14.8},{"mes":"2022-11","termino":"hoteles en Buga","interes_google":1.2},{"mes":"2022-11","termino":"milagroso de Buga","interes_google":4.5},{"mes":"2022-12","termino":"Basílica de Buga","interes_google":1.0},{"mes":"2022-12","termino":"Buga Valle","interes_google":64.8},{"mes":"2022-12","termino":"Guadalajara de Buga","interes_google":13.2},{"mes":"2022-12","termino":"Señor de los Milagros Buga","interes_google":14.2},{"mes":"2022-12","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2022-12","termino":"milagroso de Buga","interes_google":3.2},{"mes":"2023-01","termino":"Basílica de Buga","interes_google":1.0},{"mes":"2023-01","termino":"Buga Valle","interes_google":82.4},{"mes":"2023-01","termino":"Guadalajara de Buga","interes_google":16.0},{"mes":"2023-01","termino":"Señor de los Milagros Buga","interes_google":18.6},{"mes":"2023-01","termino":"hoteles en Buga","interes_google":3.6},{"mes":"2023-01","termino":"milagroso de Buga","interes_google":5.8},{"mes":"2023-02","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2023-02","termino":"Buga Valle","interes_google":63.2},{"mes":"2023-02","termino":"Guadalajara de Buga","interes_google":15.5},{"mes":"2023-02","termino":"Señor de los Milagros Buga","interes_google":17.0},{"mes":"2023-02","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2023-02","termino":"milagroso de Buga","interes_google":4.8},{"mes":"2023-03","termino":"Basílica de Buga","interes_google":1.2},{"mes":"2023-03","termino":"Buga Valle","interes_google":66.0},{"mes":"2023-03","termino":"Guadalajara de Buga","interes_google":16.0},{"mes":"2023-03","termino":"Señor de los Milagros Buga","interes_google":15.2},{"mes":"2023-03","termino":"hoteles en Buga","interes_google":2.2},{"mes":"2023-03","termino":"milagroso de Buga","interes_google":3.2},{"mes":"2023-04","termino":"Basílica de Buga","interes_google":2.8},{"mes":"2023-04","termino":"Buga Valle","interes_google":69.0},{"mes":"2023-04","termino":"Guadalajara de Buga","interes_google":13.2},{"mes":"2023-04","termino":"Señor de los Milagros Buga","interes_google":16.8},{"mes":"2023-04","termino":"hoteles en Buga","interes_google":0.8},{"mes":"2023-04","termino":"milagroso de Buga","interes_google":4.8},{"mes":"2023-05","termino":"Basílica de Buga","interes_google":2.0},{"mes":"2023-05","termino":"Buga Valle","interes_google":59.5},{"mes":"2023-05","termino":"Guadalajara de Buga","interes_google":12.8},{"mes":"2023-05","termino":"Señor de los Milagros Buga","interes_google":12.8},{"mes":"2023-05","termino":"hoteles en Buga","interes_google":1.8},{"mes":"2023-05","termino":"milagroso de Buga","interes_google":4.2},{"mes":"2023-06","termino":"Basílica de Buga","interes_google":1.0},{"mes":"2023-06","termino":"Buga Valle","interes_google":71.8},{"mes":"2023-06","termino":"Guadalajara de Buga","interes_google":15.5},{"mes":"2023-06","termino":"Señor de los Milagros Buga","interes_google":15.2},{"mes":"2023-06","termino":"hoteles en Buga","interes_google":3.2},{"mes":"2023-06","termino":"milagroso de Buga","interes_google":5.0},{"mes":"2023-07","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2023-07","termino":"Buga Valle","interes_google":71.8},{"mes":"2023-07","termino":"Guadalajara de Buga","interes_google":15.2},{"mes":"2023-07","termino":"Señor de los Milagros Buga","interes_google":16.4},{"mes":"2023-07","termino":"hoteles en Buga","interes_google":3.4},{"mes":"2023-07","termino":"milagroso de Buga","interes_google":3.8},{"mes":"2023-08","termino":"Basílica de Buga","interes_google":1.0},{"mes":"2023-08","termino":"Buga Valle","interes_google":66.5},{"mes":"2023-08","termino":"Guadalajara de Buga","interes_google":12.0},{"mes":"2023-08","termino":"Señor de los Milagros Buga","interes_google":14.5},{"mes":"2023-08","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2023-08","termino":"milagroso de Buga","interes_google":6.0},{"mes":"2023-09","termino":"Basílica de Buga","interes_google":0.8},{"mes":"2023-09","termino":"Buga Valle","interes_google":61.2},{"mes":"2023-09","termino":"Guadalajara de Buga","interes_google":12.5},{"mes":"2023-09","termino":"Señor de los Milagros Buga","interes_google":27.8},{"mes":"2023-09","termino":"hoteles en Buga","interes_google":1.0},{"mes":"2023-09","termino":"milagroso de Buga","interes_google":7.0},{"mes":"2023-10","termino":"Basílica de Buga","interes_google":0.6},{"mes":"2023-10","termino":"Buga Valle","interes_google":73.0},{"mes":"2023-10","termino":"Guadalajara de Buga","interes_google":15.6},{"mes":"2023-10","termino":"Señor de los Milagros Buga","interes_google":14.6},{"mes":"2023-10","termino":"hoteles en Buga","interes_google":1.0},{"mes":"2023-10","termino":"milagroso de Buga","interes_google":4.4},{"mes":"2023-11","termino":"Basílica de Buga","interes_google":1.0},{"mes":"2023-11","termino":"Buga Valle","interes_google":63.0},{"mes":"2023-11","termino":"Guadalajara de Buga","interes_google":13.8},{"mes":"2023-11","termino":"Señor de los Milagros Buga","interes_google":14.0},{"mes":"2023-11","termino":"hoteles en Buga","interes_google":1.0},{"mes":"2023-11","termino":"milagroso de Buga","interes_google":4.8},{"mes":"2023-12","termino":"Basílica de Buga","interes_google":2.2},{"mes":"2023-12","termino":"Buga Valle","interes_google":76.6},{"mes":"2023-12","termino":"Guadalajara de Buga","interes_google":17.2},{"mes":"2023-12","termino":"Señor de los Milagros Buga","interes_google":18.8},{"mes":"2023-12","termino":"hoteles en Buga","interes_google":1.8},{"mes":"2023-12","termino":"milagroso de Buga","interes_google":7.2},{"mes":"2024-01","termino":"Basílica de Buga","interes_google":2.8},{"mes":"2024-01","termino":"Buga Valle","interes_google":79.5},{"mes":"2024-01","termino":"Guadalajara de Buga","interes_google":14.0},{"mes":"2024-01","termino":"Señor de los Milagros Buga","interes_google":20.0},{"mes":"2024-01","termino":"hoteles en Buga","interes_google":1.5},{"mes":"2024-01","termino":"milagroso de Buga","interes_google":6.8},{"mes":"2024-02","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2024-02","termino":"Buga Valle","interes_google":57.8},{"mes":"2024-02","termino":"Guadalajara de Buga","interes_google":16.8},{"mes":"2024-02","termino":"Señor de los Milagros Buga","interes_google":14.8},{"mes":"2024-02","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2024-02","termino":"milagroso de Buga","interes_google":4.5},{"mes":"2024-03","termino":"Basílica de Buga","interes_google":1.4},{"mes":"2024-03","termino":"Buga Valle","interes_google":64.8},{"mes":"2024-03","termino":"Guadalajara de Buga","interes_google":17.0},{"mes":"2024-03","termino":"Señor de los Milagros Buga","interes_google":17.4},{"mes":"2024-03","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2024-03","termino":"milagroso de Buga","interes_google":4.2},{"mes":"2024-04","termino":"Basílica de Buga","interes_google":1.2},{"mes":"2024-04","termino":"Buga Valle","interes_google":51.2},{"mes":"2024-04","termino":"Guadalajara de Buga","interes_google":14.2},{"mes":"2024-04","termino":"Señor de los Milagros Buga","interes_google":14.2},{"mes":"2024-04","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2024-04","termino":"milagroso de Buga","interes_google":5.8},{"mes":"2024-05","termino":"Basílica de Buga","interes_google":1.0},{"mes":"2024-05","termino":"Buga Valle","interes_google":52.8},{"mes":"2024-05","termino":"Guadalajara de Buga","interes_google":15.5},{"mes":"2024-05","termino":"Señor de los Milagros Buga","interes_google":12.2},{"mes":"2024-05","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2024-05","termino":"milagroso de Buga","interes_google":1.0},{"mes":"2024-06","termino":"Basílica de Buga","interes_google":0.8},{"mes":"2024-06","termino":"Buga Valle","interes_google":60.6},{"mes":"2024-06","termino":"Guadalajara de Buga","interes_google":14.6},{"mes":"2024-06","termino":"Señor de los Milagros Buga","interes_google":14.0},{"mes":"2024-06","termino":"hoteles en Buga","interes_google":1.8},{"mes":"2024-06","termino":"milagroso de Buga","interes_google":3.4},{"mes":"2024-07","termino":"Basílica de Buga","interes_google":1.0},{"mes":"2024-07","termino":"Buga Valle","interes_google":57.5},{"mes":"2024-07","termino":"Guadalajara de Buga","interes_google":13.5},{"mes":"2024-07","termino":"Señor de los Milagros Buga","interes_google":16.0},{"mes":"2024-07","termino":"hoteles en Buga","interes_google":1.0},{"mes":"2024-07","termino":"milagroso de Buga","interes_google":2.8},{"mes":"2024-08","termino":"Basílica de Buga","interes_google":3.5},{"mes":"2024-08","termino":"Buga Valle","interes_google":59.8},{"mes":"2024-08","termino":"Guadalajara de Buga","interes_google":15.2},{"mes":"2024-08","termino":"Señor de los Milagros Buga","interes_google":15.8},{"mes":"2024-08","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2024-08","termino":"milagroso de Buga","interes_google":3.0},{"mes":"2024-09","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2024-09","termino":"Buga Valle","interes_google":59.6},{"mes":"2024-09","termino":"Guadalajara de Buga","interes_google":15.0},{"mes":"2024-09","termino":"Señor de los Milagros Buga","interes_google":21.0},{"mes":"2024-09","termino":"hoteles en Buga","interes_google":1.0},{"mes":"2024-09","termino":"milagroso de Buga","interes_google":4.6},{"mes":"2024-10","termino":"Basílica de Buga","interes_google":1.2},{"mes":"2024-10","termino":"Buga Valle","interes_google":55.8},{"mes":"2024-10","termino":"Guadalajara de Buga","interes_google":16.0},{"mes":"2024-10","termino":"Señor de los Milagros Buga","interes_google":15.0},{"mes":"2024-10","termino":"hoteles en Buga","interes_google":1.2},{"mes":"2024-10","termino":"milagroso de Buga","interes_google":4.0},{"mes":"2024-11","termino":"Basílica de Buga","interes_google":1.2},{"mes":"2024-11","termino":"Buga Valle","interes_google":56.8},{"mes":"2024-11","termino":"Guadalajara de Buga","interes_google":16.2},{"mes":"2024-11","termino":"Señor de los Milagros Buga","interes_google":13.8},{"mes":"2024-11","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2024-11","termino":"milagroso de Buga","interes_google":4.0},{"mes":"2024-12","termino":"Basílica de Buga","interes_google":1.4},{"mes":"2024-12","termino":"Buga Valle","interes_google":65.8},{"mes":"2024-12","termino":"Guadalajara de Buga","interes_google":18.0},{"mes":"2024-12","termino":"Señor de los Milagros Buga","interes_google":13.8},{"mes":"2024-12","termino":"hoteles en Buga","interes_google":3.2},{"mes":"2024-12","termino":"milagroso de Buga","interes_google":2.8},{"mes":"2025-01","termino":"Basílica de Buga","interes_google":2.5},{"mes":"2025-01","termino":"Buga Valle","interes_google":67.0},{"mes":"2025-01","termino":"Guadalajara de Buga","interes_google":16.0},{"mes":"2025-01","termino":"Señor de los Milagros Buga","interes_google":17.5},{"mes":"2025-01","termino":"hoteles en Buga","interes_google":1.5},{"mes":"2025-01","termino":"milagroso de Buga","interes_google":3.5},{"mes":"2025-02","termino":"Basílica de Buga","interes_google":1.2},{"mes":"2025-02","termino":"Buga Valle","interes_google":50.2},{"mes":"2025-02","termino":"Guadalajara de Buga","interes_google":17.8},{"mes":"2025-02","termino":"Señor de los Milagros Buga","interes_google":13.0},{"mes":"2025-02","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2025-02","termino":"milagroso de Buga","interes_google":2.8},{"mes":"2025-03","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2025-03","termino":"Buga Valle","interes_google":48.8},{"mes":"2025-03","termino":"Guadalajara de Buga","interes_google":15.8},{"mes":"2025-03","termino":"Señor de los Milagros Buga","interes_google":13.2},{"mes":"2025-03","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2025-03","termino":"milagroso de Buga","interes_google":1.2},{"mes":"2025-04","termino":"Basílica de Buga","interes_google":2.2},{"mes":"2025-04","termino":"Buga Valle","interes_google":58.5},{"mes":"2025-04","termino":"Guadalajara de Buga","interes_google":15.2},{"mes":"2025-04","termino":"Señor de los Milagros Buga","interes_google":17.2},{"mes":"2025-04","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2025-04","termino":"milagroso de Buga","interes_google":3.2},{"mes":"2025-05","termino":"Basílica de Buga","interes_google":1.2},{"mes":"2025-05","termino":"Buga Valle","interes_google":50.0},{"mes":"2025-05","termino":"Guadalajara de Buga","interes_google":15.5},{"mes":"2025-05","termino":"Señor de los Milagros Buga","interes_google":12.0},{"mes":"2025-05","termino":"hoteles en Buga","interes_google":1.0},{"mes":"2025-05","termino":"milagroso de Buga","interes_google":1.0},{"mes":"2025-06","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2025-06","termino":"Buga Valle","interes_google":48.8},{"mes":"2025-06","termino":"Guadalajara de Buga","interes_google":15.6},{"mes":"2025-06","termino":"Señor de los Milagros Buga","interes_google":13.4},{"mes":"2025-06","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2025-06","termino":"milagroso de Buga","interes_google":4.4},{"mes":"2025-07","termino":"Basílica de Buga","interes_google":1.4},{"mes":"2025-07","termino":"Buga Valle","interes_google":60.9},{"mes":"2025-07","termino":"Guadalajara de Buga","interes_google":20.5},{"mes":"2025-07","termino":"Señor de los Milagros Buga","interes_google":16.9},{"mes":"2025-07","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2025-07","termino":"milagroso de Buga","interes_google":3.4},{"mes":"2025-08","termino":"Basílica de Buga","interes_google":2.4},{"mes":"2025-08","termino":"Buga Valle","interes_google":57.6},{"mes":"2025-08","termino":"Guadalajara de Buga","interes_google":17.9},{"mes":"2025-08","termino":"Señor de los Milagros Buga","interes_google":18.1},{"mes":"2025-08","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2025-08","termino":"milagroso de Buga","interes_google":4.7},{"mes":"2025-09","termino":"Basílica de Buga","interes_google":1.6},{"mes":"2025-09","termino":"Buga Valle","interes_google":54.6},{"mes":"2025-09","termino":"Guadalajara de Buga","interes_google":17.8},{"mes":"2025-09","termino":"Señor de los Milagros Buga","interes_google":30.0},{"mes":"2025-09","termino":"hoteles en Buga","interes_google":2.4},{"mes":"2025-09","termino":"milagroso de Buga","interes_google":4.9},{"mes":"2025-10","termino":"Basílica de Buga","interes_google":2.5},{"mes":"2025-10","termino":"Buga Valle","interes_google":57.1},{"mes":"2025-10","termino":"Guadalajara de Buga","interes_google":18.9},{"mes":"2025-10","termino":"Señor de los Milagros Buga","interes_google":15.8},{"mes":"2025-10","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2025-10","termino":"milagroso de Buga","interes_google":4.4},{"mes":"2025-11","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2025-11","termino":"Buga Valle","interes_google":58.8},{"mes":"2025-11","termino":"Guadalajara de Buga","interes_google":17.3},{"mes":"2025-11","termino":"Señor de los Milagros Buga","interes_google":14.4},{"mes":"2025-11","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2025-11","termino":"milagroso de Buga","interes_google":1.1},{"mes":"2025-12","termino":"Basílica de Buga","interes_google":3.9},{"mes":"2025-12","termino":"Buga Valle","interes_google":65.1},{"mes":"2025-12","termino":"Guadalajara de Buga","interes_google":21.6},{"mes":"2025-12","termino":"Señor de los Milagros Buga","interes_google":16.8},{"mes":"2025-12","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2025-12","termino":"milagroso de Buga","interes_google":4.2},{"mes":"2026-01","termino":"Basílica de Buga","interes_google":5.6},{"mes":"2026-01","termino":"Buga Valle","interes_google":71.8},{"mes":"2026-01","termino":"Guadalajara de Buga","interes_google":23.6},{"mes":"2026-01","termino":"Señor de los Milagros Buga","interes_google":21.4},{"mes":"2026-01","termino":"hoteles en Buga","interes_google":1.4},{"mes":"2026-01","termino":"milagroso de Buga","interes_google":5.4},{"mes":"2026-02","termino":"Basílica de Buga","interes_google":1.2},{"mes":"2026-02","termino":"Buga Valle","interes_google":56.4},{"mes":"2026-02","termino":"Guadalajara de Buga","interes_google":20.6},{"mes":"2026-02","termino":"Señor de los Milagros Buga","interes_google":18.0},{"mes":"2026-02","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2026-02","termino":"milagroso de Buga","interes_google":5.9},{"mes":"2026-03","termino":"Basílica de Buga","interes_google":4.0},{"mes":"2026-03","termino":"Buga Valle","interes_google":69.6},{"mes":"2026-03","termino":"Guadalajara de Buga","interes_google":20.1},{"mes":"2026-03","termino":"Señor de los Milagros Buga","interes_google":19.2},{"mes":"2026-03","termino":"hoteles en Buga","interes_google":1.1},{"mes":"2026-03","termino":"milagroso de Buga","interes_google":3.0},{"mes":"2026-04","termino":"Basílica de Buga","interes_google":2.9},{"mes":"2026-04","termino":"Buga Valle","interes_google":56.5},{"mes":"2026-04","termino":"Guadalajara de Buga","interes_google":19.1},{"mes":"2026-04","termino":"Señor de los Milagros Buga","interes_google":15.9},{"mes":"2026-04","termino":"hoteles en Buga","interes_google":0.0},{"mes":"2026-04","termino":"milagroso de Buga","interes_google":1.9},{"mes":"2026-05","termino":"Basílica de Buga","interes_google":0.0},{"mes":"2026-05","termino":"Buga Valle","interes_google":58.4},{"mes":"2026-05","termino":"Guadalajara de Buga","interes_google":17.6},{"mes":"2026-05","termino":"Señor de los Milagros Buga","interes_google":15.8},{"mes":"2026-05","termino":"hoteles en Buga","interes_google":1.9},{"mes":"2026-05","termino":"milagroso de Buga","interes_google":3.3},{"mes":"2026-06","termino":"Basílica de Buga","interes_google":3.1},{"mes":"2026-06","termino":"Buga Valle","interes_google":57.0},{"mes":"2026-06","termino":"Guadalajara de Buga","interes_google":15.8},{"mes":"2026-06","termino":"Señor de los Milagros Buga","interes_google":17.4},{"mes":"2026-06","termino":"hoteles en Buga","interes_google":1.2},{"mes":"2026-06","termino":"milagroso de Buga","interes_google":4.2},{"mes":"2026-07","termino":"Basílica de Buga","interes_google":3.0},{"mes":"2026-07","termino":"Buga Valle","interes_google":53.0},{"mes":"2026-07","termino":"Guadalajara de Buga","interes_google":16.0},{"mes":"2026-07","termino":"Señor de los Milagros Buga","interes_google":14.0},{"mes":"2026-07","termino":"hoteles en Buga","interes_google":2.0},{"mes":"2026-07","termino":"milagroso de Buga","interes_google":5.0}],"seasonality":[{"mes_num":1,"mes":"Ene","termino":"Basílica de Buga","interes_google":2.7},{"mes_num":1,"mes":"Ene","termino":"Buga Valle","interes_google":74.5},{"mes_num":1,"mes":"Ene","termino":"Guadalajara de Buga","interes_google":17.6},{"mes_num":1,"mes":"Ene","termino":"Señor de los Milagros Buga","interes_google":19.8},{"mes_num":1,"mes":"Ene","termino":"hoteles en Buga","interes_google":2.4},{"mes_num":1,"mes":"Ene","termino":"milagroso de Buga","interes_google":5.0},{"mes_num":2,"mes":"Feb","termino":"Basílica de Buga","interes_google":0.6},{"mes_num":2,"mes":"Feb","termino":"Buga Valle","interes_google":56.8},{"mes_num":2,"mes":"Feb","termino":"Guadalajara de Buga","interes_google":18.0},{"mes_num":2,"mes":"Feb","termino":"Señor de los Milagros Buga","interes_google":16.3},{"mes_num":2,"mes":"Feb","termino":"hoteles en Buga","interes_google":0.2},{"mes_num":2,"mes":"Feb","termino":"milagroso de Buga","interes_google":4.7},{"mes_num":3,"mes":"Mar","termino":"Basílica de Buga","interes_google":2.1},{"mes_num":3,"mes":"Mar","termino":"Buga Valle","interes_google":63.5},{"mes_num":3,"mes":"Mar","termino":"Guadalajara de Buga","interes_google":17.9},{"mes_num":3,"mes":"Mar","termino":"Señor de los Milagros Buga","interes_google":16.6},{"mes_num":3,"mes":"Mar","termino":"hoteles en Buga","interes_google":1.3},{"mes_num":3,"mes":"Mar","termino":"milagroso de Buga","interes_google":2.9},{"mes_num":4,"mes":"Abr","termino":"Basílica de Buga","interes_google":2.6},{"mes_num":4,"mes":"Abr","termino":"Buga Valle","interes_google":60.8},{"mes_num":4,"mes":"Abr","termino":"Guadalajara de Buga","interes_google":16.2},{"mes_num":4,"mes":"Abr","termino":"Señor de los Milagros Buga","interes_google":16.4},{"mes_num":4,"mes":"Abr","termino":"hoteles en Buga","interes_google":0.9},{"mes_num":4,"mes":"Abr","termino":"milagroso de Buga","interes_google":3.8},{"mes_num":5,"mes":"May","termino":"Basílica de Buga","interes_google":0.7},{"mes_num":5,"mes":"May","termino":"Buga Valle","interes_google":56.7},{"mes_num":5,"mes":"May","termino":"Guadalajara de Buga","interes_google":15.5},{"mes_num":5,"mes":"May","termino":"Señor de los Milagros Buga","interes_google":13.9},{"mes_num":5,"mes":"May","termino":"hoteles en Buga","interes_google":1.2},{"mes_num":5,"mes":"May","termino":"milagroso de Buga","interes_google":2.9},{"mes_num":6,"mes":"Jun","termino":"Basílica de Buga","interes_google":1.5},{"mes_num":6,"mes":"Jun","termino":"Buga Valle","interes_google":59.7},{"mes_num":6,"mes":"Jun","termino":"Guadalajara de Buga","interes_google":15.0},{"mes_num":6,"mes":"Jun","termino":"Señor de los Milagros Buga","interes_google":15.1},{"mes_num":6,"mes":"Jun","termino":"hoteles en Buga","interes_google":1.8},{"mes_num":6,"mes":"Jun","termino":"milagroso de Buga","interes_google":4.0},{"mes_num":7,"mes":"Jul","termino":"Basílica de Buga","interes_google":1.2},{"mes_num":7,"mes":"Jul","termino":"Buga Valle","interes_google":64.0},{"mes_num":7,"mes":"Jul","termino":"Guadalajara de Buga","interes_google":16.9},{"mes_num":7,"mes":"Jul","termino":"Señor de los Milagros Buga","interes_google":16.0},{"mes_num":7,"mes":"Jul","termino":"hoteles en Buga","interes_google":1.3},{"mes_num":7,"mes":"Jul","termino":"milagroso de Buga","interes_google":3.6},{"mes_num":8,"mes":"Ago","termino":"Basílica de Buga","interes_google":2.6},{"mes_num":8,"mes":"Ago","termino":"Buga Valle","interes_google":62.0},{"mes_num":8,"mes":"Ago","termino":"Guadalajara de Buga","interes_google":15.6},{"mes_num":8,"mes":"Ago","termino":"Señor de los Milagros Buga","interes_google":16.6},{"mes_num":8,"mes":"Ago","termino":"hoteles en Buga","interes_google":0.6},{"mes_num":8,"mes":"Ago","termino":"milagroso de Buga","interes_google":4.8},{"mes_num":9,"mes":"Sep","termino":"Basílica de Buga","interes_google":1.0},{"mes_num":9,"mes":"Sep","termino":"Buga Valle","interes_google":58.1},{"mes_num":9,"mes":"Sep","termino":"Guadalajara de Buga","interes_google":15.0},{"mes_num":9,"mes":"Sep","termino":"Señor de los Milagros Buga","interes_google":27.0},{"mes_num":9,"mes":"Sep","termino":"hoteles en Buga","interes_google":1.6},{"mes_num":9,"mes":"Sep","termino":"milagroso de Buga","interes_google":5.4},{"mes_num":10,"mes":"Oct","termino":"Basílica de Buga","interes_google":1.5},{"mes_num":10,"mes":"Oct","termino":"Buga Valle","interes_google":60.9},{"mes_num":10,"mes":"Oct","termino":"Guadalajara de Buga","interes_google":16.4},{"mes_num":10,"mes":"Oct","termino":"Señor de los Milagros Buga","interes_google":15.3},{"mes_num":10,"mes":"Oct","termino":"hoteles en Buga","interes_google":1.3},{"mes_num":10,"mes":"Oct","termino":"milagroso de Buga","interes_google":4.5},{"mes_num":11,"mes":"Nov","termino":"Basílica de Buga","interes_google":0.4},{"mes_num":11,"mes":"Nov","termino":"Buga Valle","interes_google":57.9},{"mes_num":11,"mes":"Nov","termino":"Guadalajara de Buga","interes_google":15.5},{"mes_num":11,"mes":"Nov","termino":"Señor de los Milagros Buga","interes_google":14.3},{"mes_num":11,"mes":"Nov","termino":"hoteles en Buga","interes_google":0.4},{"mes_num":11,"mes":"Nov","termino":"milagroso de Buga","interes_google":2.9},{"mes_num":12,"mes":"Dic","termino":"Basílica de Buga","interes_google":2.4},{"mes_num":12,"mes":"Dic","termino":"Buga Valle","interes_google":67.8},{"mes_num":12,"mes":"Dic","termino":"Guadalajara de Buga","interes_google":18.3},{"mes_num":12,"mes":"Dic","termino":"Señor de los Milagros Buga","interes_google":16.1},{"mes_num":12,"mes":"Dic","termino":"hoteles en Buga","interes_google":1.1},{"mes_num":12,"mes":"Dic","termino":"milagroso de Buga","interes_google":4.4}],"terms":["Buga Valle","Señor de los Milagros Buga","Guadalajara de Buga","milagroso de Buga","Basílica de Buga","hoteles en Buga"],"topDepartments":[{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Valle del Cauca","interes":100.0},{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Quindío","interes":17.0},{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Cauca","interes":13.0},{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Risaralda","interes":12.0},{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Caldas","interes":8.0},{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Caquetá","interes":7.0},{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Tolima","interes":6.0},{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Nariño","interes":5.0},{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Antioquia","interes":4.0},{"periodo":"ultimo_anio","termino":"Buga Valle","region":"Cundinamarca","interes":4.0}],"pendingTerms":[],"lowSignalTerms":["Semana Santa Buga","restaurantes en Buga","cómo llegar a Buga","pueblos patrimonio Colombia","Buga turismo","qué hacer en Buga","sitios turísticos Buga","turismo religioso Buga","hospedaje en Buga","planes en Buga","centro histórico Buga","turismo religioso Colombia"],"relatedTop":[{"termino":"Buga Valle","consulta":"buga valle del cauca","puntaje":100,"valor_mostrar":"100"},{"termino":"milagroso de Buga","consulta":"el milagroso de buga","puntaje":100,"valor_mostrar":"100"},{"termino":"Señor de los Milagros Buga","consulta":"el señor de los milagros buga","puntaje":100,"valor_mostrar":"100"},{"termino":"Basílica de Buga","consulta":"horario de misas en la basílica de buga","puntaje":100,"valor_mostrar":"100"},{"termino":"Guadalajara de Buga","consulta":"hotel guadalajara de buga","puntaje":100,"valor_mostrar":"100"},{"termino":"hoteles en Buga","consulta":"hoteles en buga valle","puntaje":100,"valor_mostrar":"100"},{"termino":"Guadalajara de Buga","consulta":"guadalajara de buga valle del cauca","puntaje":97,"valor_mostrar":"97"},{"termino":"Señor de los Milagros Buga","consulta":"misa señor de los milagros buga","puntaje":81,"valor_mostrar":"81"},{"termino":"Basílica de Buga","consulta":"horario misas basílica de buga hoy","puntaje":40,"valor_mostrar":"40"},{"termino":"hoteles en Buga","consulta":"hoteles en buga valle del cauca","puntaje":37,"valor_mostrar":"37"},{"termino":"Guadalajara de Buga","consulta":"codigo postal guadalajara de buga","puntaje":36,"valor_mostrar":"36"},{"termino":"Señor de los Milagros Buga","consulta":"basilica del señor de los milagros buga","puntaje":32,"valor_mostrar":"32"}],"relatedRising":[{"termino":"Guadalajara de Buga","consulta":"inundaciones en guadalajara de buga","puntaje":161550,"valor_mostrar":"Breakout"},{"termino":"Guadalajara de Buga","consulta":"patinodromo internacional ciudadela educativa ita guadalajara de buga","puntaje":500,"valor_mostrar":"+500%"},{"termino":"Basílica de Buga","consulta":"horario de misas en la basílica de buga","puntaje":110,"valor_mostrar":"+110%"},{"termino":"Basílica de Buga","consulta":"horario misas basílica de buga hoy","puntaje":80,"valor_mostrar":"+80%"},{"termino":"Buga Valle","consulta":"basilica de buga","puntaje":60,"valor_mostrar":"+60%"},{"termino":"hoteles en Buga","consulta":"hoteles en buga con piscina","puntaje":60,"valor_mostrar":"+60%"}],"notes":["Google Trends mide interés relativo de 0 a 100, no volumen absoluto de búsquedas.","Este tablero usa series temporales y lectura territorial descargadas para los 18 términos definidos.","Las consultas relacionadas quedaron pendientes porque Google Trends devolvió límite temporal 429 en esa etapa."]};
+    const palette = ["#2f8f83", "#587aa7", "#d9a441", "#b85b5b", "#6d7d8c", "#8c6bb1"];
+
+    function makeCards() {
+      const m = DATA.metrics;
+      const cards = [
+        [m.termsWithData, "términos con señal visible"],
+        [m.records.toLocaleString("es-CO"), "registros analizados"],
+        [m.dominantTerm, `término dominante (${
+          m.dominantAvg
+        } prom.)`],
+        [m.recentLeader, `líder último año (${m.recentLeaderAvg} prom.)`],
+        [`${m.peakValue}`, `pico relativo: ${m.peakDate}`],
+        [m.bestMonth || "N/D", `mejor mes promedio: ${m.bestMonthTerm || "N/D"}`],
+        [m.topDepartment || "N/D", "territorio con mayor interés"],
+      ];
+      document.getElementById("cards").innerHTML = cards.map(([value, label]) => `
+        <article class="card">
+          <div class="value">${value}</div>
+          <div class="label">${label}</div>
+        </article>
+      `).join("");
+    }
+
+    function lineChart() {
+      const labels = [...new Set(DATA.monthly.map(r => r.mes))].sort();
+      const datasets = DATA.terms.map((term, i) => ({
+        label: term,
+        data: labels.map(mes => {
+          const row = DATA.monthly.find(r => r.mes === mes && r.termino === term);
+          return row ? row.interes_google : null;
+        }),
+        borderColor: palette[i % palette.length],
+        backgroundColor: palette[i % palette.length],
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.25
+      }));
+      new Chart(document.getElementById("lineChart"), {
+        type: "line",
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          interaction: { mode: "index", intersect: false },
+          plugins: { legend: { position: "bottom" } },
+          scales: { y: { beginAtZero: true, title: { display: true, text: "Índice Google Trends" } } }
+        }
+      });
+    }
+
+    function avgChart() {
+      const rows = [...DATA.summary].sort((a,b) => a.promedio_2022_hoy - b.promedio_2022_hoy);
+      new Chart(document.getElementById("avgChart"), {
+        type: "bar",
+        data: {
+          labels: rows.map(r => r.termino),
+          datasets: [{ label: "Promedio 2022-hoy", data: rows.map(r => r.promedio_2022_hoy), backgroundColor: "#587aa7" }]
+        },
+        options: {
+          indexAxis: "y",
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true } }
+        }
+      });
+    }
+
+    function changeChart() {
+      const rows = DATA.summary;
+      new Chart(document.getElementById("changeChart"), {
+        type: "bar",
+        data: {
+          labels: rows.map(r => r.termino),
+          datasets: [
+            { label: "Periodo anterior", data: rows.map(r => r.promedio_2022_antes_ultimo_anio), backgroundColor: "#b8c4d8" },
+            { label: "Último año", data: rows.map(r => r.promedio_ultimo_anio), backgroundColor: "#2f8f83" }
+          ]
+        },
+        options: {
+          plugins: { legend: { position: "bottom" } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    function seasonChart() {
+      const monthOrder = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+      const selected = DATA.metrics.dominantTerm;
+      const rows = DATA.seasonality.filter(r => r.termino === selected).sort((a,b) => a.mes_num - b.mes_num);
+      new Chart(document.getElementById("seasonChart"), {
+        type: "bar",
+        data: {
+          labels: monthOrder,
+          datasets: [{ label: selected, data: monthOrder.map(m => (rows.find(r => r.mes === m) || {}).interes_google || 0), backgroundColor: "#d9a441" }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    function departmentChart() {
+      const rows = [...DATA.topDepartments].sort((a,b) => a.interes - b.interes);
+      new Chart(document.getElementById("departmentChart"), {
+        type: "bar",
+        data: {
+          labels: rows.map(r => r.region),
+          datasets: [{ label: "Interés territorial", data: rows.map(r => r.interes), backgroundColor: "#587aa7" }]
+        },
+        options: {
+          indexAxis: "y",
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true } }
+        }
+      });
+    }
+
+    function badgeClass(text) {
+      if (text.includes("Aumenta")) return "up";
+      if (text.includes("Disminuye")) return "down";
+      return "flat";
+    }
+
+    function makeTable() {
+      const rows = DATA.summary.map(r => `
+        <tr>
+          <td>${r.termino}</td>
+          <td class="num">${r.promedio_2022_hoy}</td>
+          <td class="num">${r.promedio_ultimo_anio}</td>
+          <td class="num">${r.cambio_abs}</td>
+          <td><span class="pill ${badgeClass(r.lectura)}">${r.lectura}</span></td>
+          <td class="num">${r.pico_interes}</td>
+          <td>${r.fecha_pico}</td>
+          <td class="num">${r.semanas_con_interes_pct}%</td>
+        </tr>
+      `).join("");
+      document.getElementById("summaryTable").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Término</th>
+              <th class="num">Prom. 2022-hoy</th>
+              <th class="num">Prom. último año</th>
+              <th class="num">Cambio abs.</th>
+              <th>Lectura</th>
+              <th class="num">Pico</th>
+              <th>Fecha pico</th>
+              <th class="num">Semanas con interés</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function makeRelatedTables() {
+      const renderRows = (records, valueLabel) => {
+        if (!records.length) {
+          return '<p class="small">Sin consultas relacionadas con puntaje disponible para este corte.</p>';
+        }
+        const rows = records.map(r => `
+          <tr>
+            <td>${r.consulta}</td>
+            <td>${r.termino}</td>
+            <td class="num">${r.valor_mostrar}</td>
+          </tr>
+        `).join("");
+        return `
+          <table>
+            <thead>
+              <tr>
+                <th>Consulta</th>
+                <th>Término base</th>
+                <th class="num">${valueLabel}</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        `;
+      };
+      document.getElementById("topQueriesTable").innerHTML = renderRows(DATA.relatedTop || [], "Puntaje");
+      document.getElementById("risingQueriesTable").innerHTML = renderRows(DATA.relatedRising || [], "Cambio");
+    }
+
+    function makeNotes() {
+      document.getElementById("lowSignal").textContent = DATA.lowSignalTerms.length
+        ? DATA.lowSignalTerms.join(", ")
+        : "No se identificaron términos turísticos explícitos con señal baja en el corte disponible.";
+      document.getElementById("pendingTerms").innerHTML = DATA.pendingTerms.length
+        ? DATA.pendingTerms.map(t => `<div>• ${t}</div>`).join("")
+        : "<div>No hay términos pendientes en el corte actual.</div>";
+      document.getElementById("coverageNotes").innerHTML = [
+        "Google Trends mide interés relativo de 0 a 100, no volumen absoluto de búsquedas.",
+        "En las gráficas principales se muestran solo términos con puntaje visible; los de señal muy baja se dejan como nota.",
+        "Top queries muestra consultas relacionadas con mayor interés relativo dentro de cada término base.",
+        "Rising queries muestra consultas cuyo interés creció frente al periodo anterior; Breakout indica crecimiento muy alto desde una base baja."
+      ].map(note => `<p>${note}</p>`).join("");
+    }
+
+    makeCards();
+    lineChart();
+    avgChart();
+    changeChart();
+    seasonChart();
+    departmentChart();
+    makeTable();
+    makeRelatedTables();
+    makeNotes();
+  </script>
+</body>
+</html>
