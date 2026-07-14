@@ -20,3 +20,7 @@ Este repositorio publica los tableros web estáticos del piloto de Guadalajara d
 - `interes-web/`: tablero de Google Trends.
 - `arquetipos/`: tablero ejecutivo de perfiles de turistas.
 - `.nojekyll`: configuración para GitHub Pages.
+
+## Actualización internacional
+
+El tablero de interés web incorpora una capa exploratoria de interés internacional potencial basada en países desde donde aparecen búsquedas relacionadas con Buga en Google Trends. Esta lectura no equivale a nacionalidad ni a visitantes reales.
