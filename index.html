@@ -38,32 +38,6 @@
       color:#e9f2f2;
       line-height:1.45;
     }
-    .summary {
-      display:grid;
-      grid-template-columns:repeat(4,minmax(150px,1fr));
-      gap:12px;
-      padding:16px 22px;
-      background:#eef3f5;
-      border-bottom:1px solid var(--line);
-    }
-    .kpi {
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:8px;
-      padding:13px 14px;
-    }
-    .kpi strong {
-      display:block;
-      font-size:24px;
-      line-height:1;
-    }
-    .kpi span {
-      display:block;
-      margin-top:5px;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.3;
-    }
     .tabs {
       display:grid;
       grid-template-columns:repeat(4,minmax(170px,1fr));
@@ -201,14 +175,14 @@
       font-size:12px;
     }
     @media (max-width:1000px) {
-      .summary, .tabs, .insight-strip { grid-template-columns:1fr 1fr; }
+      .tabs, .insight-strip { grid-template-columns:1fr 1fr; }
       .toolbar { align-items:flex-start; flex-direction:column; }
       iframe { min-height:760px; height:74vh; }
     }
     @media (max-width:640px) {
       header { padding-left:18px; padding-right:18px; }
-      main, .summary, .tabs, footer { padding-left:14px; padding-right:14px; }
-      .summary, .tabs, .insight-strip { grid-template-columns:1fr; }
+      main, .tabs, footer { padding-left:14px; padding-right:14px; }
+      .tabs, .insight-strip { grid-template-columns:1fr; }
       select { min-width:100%; width:100%; }
       .control-row { width:100%; }
       .open-link { width:100%; }
@@ -220,13 +194,6 @@
     <h1>Tablero global - Pueblos Patrimoniales</h1>
     <p>Consulta los productos del proyecto en una sola interfaz. Cada producto tiene su propio filtro de municipio para que el tablero pueda crecer a medida que se incorporen nuevos pueblos patrimoniales.</p>
   </header>
-
-  <section class="summary">
-    <article class="kpi"><strong id="kpiMunicipios">0</strong><span>municipios con Producto 2</span></article>
-    <article class="kpi"><strong id="kpiOferta">0</strong><span>lugares en base oficial del Producto 1</span></article>
-    <article class="kpi"><strong id="kpiResenas">0</strong><span>reseñas analizadas en Producto 2</span></article>
-    <article class="kpi"><strong id="kpiUnicas">0</strong><span>reseñas únicas extraídas</span></article>
-  </section>
 
   <nav class="tabs" aria-label="Productos">
     <button class="tab-button active" data-target="producto1"><span>1. Oferta turística</span><small>Mapa e inventario oficial</small></button>
@@ -412,10 +379,6 @@
     fillMunicipalitySelect(document.getElementById("p3Municipio"), municipalities);
     fillMunicipalitySelect(document.getElementById("p4Municipio"), municipalities);
 
-    document.getElementById("kpiMunicipios").textContent = formatNumber(DATA.totals.municipalities_p2);
-    document.getElementById("kpiOferta").textContent = formatNumber(DATA.totals.p1_places);
-    document.getElementById("kpiResenas").textContent = formatNumber(DATA.totals.p2_reviews);
-    document.getElementById("kpiUnicas").textContent = formatNumber(DATA.totals.p2_unique_reviews);
     document.getElementById("generated").textContent = DATA.generated;
 
     setProduct1Filter("todos");
