@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arquetipos de turistas - Honda</title>
+  <style>
+    :root {
+      --bg:#f7faf9; --card:#ffffff; --ink:#10202a; --muted:#64767f; --line:#dce8e8;
+      --teal:#2f8f83; --blue:#587aa7; --amber:#d9a441; --red:#b85b5b; --soft:#eef8f5;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--ink); }
+    header { padding:34px 42px 24px; background:linear-gradient(135deg,#1f766f,#253c63); color:white; }
+    header h1 { margin:0 0 8px; font-size:32px; letter-spacing:0; }
+    header p { margin:0; max-width:1080px; line-height:1.5; color:#e8f3f5; }
+    main { padding:24px 32px 42px; max-width:1500px; margin:auto; }
+    .kpis { display:grid; grid-template-columns:repeat(4,minmax(160px,1fr)); gap:14px; margin-top:-42px; }
+    .kpi,.card { background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 10px 24px rgba(16,32,42,.06); }
+    .kpi { padding:18px; }
+    .kpi span { color:var(--muted); font-size:13px; }
+    .kpi strong { display:block; font-size:30px; margin-top:4px; }
+    .arqs { display:grid; grid-template-columns:repeat(2,minmax(320px,1fr)); gap:16px; margin-top:18px; }
+    .grid { display:grid; grid-template-columns:1.1fr .9fr; gap:16px; margin-top:16px; }
+    .card { padding:22px; min-width:0; }
+    .arq-card { min-height:340px; }
+    .card-head { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; }
+    h2 { margin:0 0 14px; font-size:22px; }
+    h3 { margin:0; font-size:21px; }
+    .eyebrow { margin:0 0 5px; text-transform:uppercase; font-size:11px; color:var(--teal); font-weight:800; letter-spacing:.12em; }
+    .badge { background:#fef3c7; color:#7c5a00; padding:7px 10px; border-radius:999px; font-size:12px; font-weight:800; white-space:nowrap; }
+    .tags { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+    .pill { display:inline-flex; align-items:center; background:#e7f3f0; color:#1f6f68; border-radius:999px; padding:6px 10px; font-size:12px; margin:3px; }
+    p { line-height:1.48; }
+    .message { background:#f3f7f7; border-left:4px solid var(--teal); padding:10px 12px; border-radius:8px; color:#29434c; }
+    details { margin-top:10px; border-top:1px solid var(--line); padding-top:10px; color:var(--muted); }
+    summary { cursor:pointer; color:#1f6f68; font-weight:800; }
+    li { margin:7px 0; line-height:1.35; }
+    .bar-row { display:grid; grid-template-columns:minmax(170px,240px) 1fr 52px; gap:10px; align-items:center; margin:9px 0; }
+    .bar-label { color:var(--muted); font-size:13px; }
+    .bar-track { background:#e8eeee; border-radius:999px; height:13px; overflow:hidden; }
+    .bar-fill { height:100%; background:linear-gradient(90deg,var(--teal),#68b7ad); border-radius:999px; }
+    .bar-value { font-weight:800; color:#1f6f68; font-size:13px; text-align:right; }
+    .stack-row { margin:12px 0; }
+    .stack-label { display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:5px; }
+    .stack-label span { opacity:.8; }
+    .stack { display:flex; height:24px; overflow:hidden; border-radius:999px; background:#eee; color:white; font-size:11px; font-weight:800; }
+    .stack div { display:flex; align-items:center; justify-content:center; min-width:24px; }
+    .pos { background:#2f9e73; } .neu { background:var(--amber); } .neg { background:var(--red); }
+    .queries { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .query-list { padding-left:0; list-style:none; margin:0; }
+    .query-list li { display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid var(--line); padding:8px 0; }
+    .query-list strong { color:#1f6f68; white-space:nowrap; }
+    .note { background:#fff8e8; border:1px solid #ead09b; color:#6b4b18; padding:12px 14px; border-radius:14px; line-height:1.45; }
+    .muted { color:var(--muted); font-size:13px; }
+    .empty { padding:8px 0; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th,td { padding:9px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { background:#f3f7f7; color:#29434c; font-size:12px; }
+    .num { text-align:right; }
+    footer { margin-top:22px; color:var(--muted); font-size:12px; }
+    @media (max-width:1000px) { .kpis,.grid,.arqs,.queries { grid-template-columns:1fr; } main { padding:18px; } header { padding:26px 22px 52px; } .bar-row { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Arquetipos de turistas potenciales - Honda</h1>
+    <p>Tablero ejecutivo construido con señales de oferta oficial, reseñas de Google Maps y Google Trends. Los arquetipos son perfiles interpretativos para orientar producto turístico y comunicación; no equivalen a una encuesta de visitantes.</p>
+  </header>
+  <main>
+    <section class="kpis">
+      <div class="kpi"><span>Señales de oferta</span><strong>655</strong></div>
+      <div class="kpi"><span>Reseñas analizadas</span><strong>409</strong></div>
+      <div class="kpi"><span>Reseñas positivas</span><strong>0%</strong></div>
+      <div class="kpi"><span>Arquetipos definidos</span><strong>4</strong></div>
+    </section>
+
+    <section class="arqs">
+      
+            <article class="card arq-card">
+              <div class="card-head">
+                <div>
+                  <p class="eyebrow">Arquetipo</p>
+                  <h3>Visitante de escapada fluvial y patrimonial</h3>
+                </div>
+                <span class="badge">Alto</span>
+              </div>
+              <div class="tags"><span class="pill">Evidencia Alto</span></div>
+              <p><strong>Motivación:</strong> Recorrer el centro histórico, el río Magdalena, el Puente Navarro y espacios patrimoniales en una visita corta.</p>
+              <p><strong>Origen probable:</strong> Tolima, Caldas, Cundinamarca, Bogotá y viajeros de carretera que conectan el Magdalena medio con el centro del país.</p>
+              <p><strong>Servicios que activa:</strong> Patrimonio, atractivos fluviales, gastronomía, alojamiento, cafés, comercio turístico y guianza local.</p>
+              <p><strong>Oportunidad:</strong> Construir rutas de medio día y fin de semana alrededor del río, el centro histórico, el Puente Navarro y la memoria del Magdalena.</p>
+              <p class="message">Honda: patrimonio vivo sobre el río Magdalena, ideal para caminar, comer y desconectarse un fin de semana.</p>
+              <details>
+                <summary>Ver señales usadas</summary>
+                <ul><li><strong>Google Trends:</strong> Honda Tolima queda como término líder después de retirar ruido de marca Honda.</li><li><strong>Oferta oficial:</strong> Patrimonio (90) y atractivos complementarios (57) soportan una lectura fluvial-patrimonial.</li><li><strong>Territorio:</strong> La lectura nacional muestra a Tolima como principal departamento de interés relativo para Honda Tolima.</li></ul>
+              </details>
+            </article>
+            
+            <article class="card arq-card">
+              <div class="card-head">
+                <div>
+                  <p class="eyebrow">Arquetipo</p>
+                  <h3>Visitante gastronómico con estadía corta</h3>
+                </div>
+                <span class="badge">Alto</span>
+              </div>
+              <div class="tags"><span class="pill">Evidencia Alto</span></div>
+              <p><strong>Motivación:</strong> Buscar restaurantes, ambiente, descanso y alojamiento para una escapada regional.</p>
+              <p><strong>Origen probable:</strong> Parejas, familias y grupos pequeños de municipios cercanos o viajeros de paso que deciden quedarse una noche.</p>
+              <p><strong>Servicios que activa:</strong> Restaurantes, hoteles, hospedajes, comercio local, miradores urbanos, experiencias nocturnas tranquilas y recomendaciones prácticas.</p>
+              <p><strong>Oportunidad:</strong> Empaquetar cena, hospedaje y recorrido patrimonial corto con información clara de parqueo, clima y tiempos de visita.</p>
+              <p class="message">Una escapada para comer bien, dormir en un entorno patrimonial y recorrer Honda sin afán.</p>
+              <details>
+                <summary>Ver señales usadas</summary>
+                <ul><li><strong>Oferta oficial:</strong> Gastronomía (111) y alojamiento (92) son las señales más fuertes de oferta.</li><li><strong>Reseñas:</strong> Los temas positivos más visibles incluyen gastronomía, servicio, alojamiento y paisaje/ambiente.</li><li><strong>Google Trends:</strong> Aparecen consultas de hoteles y turismo para Honda Tolima.</li></ul>
+              </details>
+            </article>
+            
+            <article class="card arq-card">
+              <div class="card-head">
+                <div>
+                  <p class="eyebrow">Arquetipo</p>
+                  <h3>Visitante práctico de decisión digital</h3>
+                </div>
+                <span class="badge">Medio</span>
+              </div>
+              <div class="tags"><span class="pill">Evidencia Medio</span></div>
+              <p><strong>Motivación:</strong> Resolver hotel, clima, mapa, temperatura, cómo llegar y datos básicos antes de viajar.</p>
+              <p><strong>Origen probable:</strong> Personas que ya consideran el viaje y usan Google para cerrar detalles operativos.</p>
+              <p><strong>Servicios que activa:</strong> Alojamiento, información turística, mapas, horarios, contacto directo, parqueaderos y rutas de llegada.</p>
+              <p><strong>Oportunidad:</strong> Mejorar fichas, páginas y piezas oficiales con información práctica actualizada y fácil de encontrar.</p>
+              <p class="message">Todo lo necesario para llegar, quedarse y moverse por Honda de forma sencilla.</p>
+              <details>
+                <summary>Ver señales usadas</summary>
+                <ul><li><strong>Consultas relacionadas:</strong> Las consultas depuradas incluyen hotel, hoteles, clima, mapa, temperatura y turismo en Honda Tolima.</li><li><strong>Reseñas:</strong> Las alertas de alojamiento, servicio, limpieza y precio indican necesidad de información práctica y gestión de expectativas.</li></ul>
+              </details>
+            </article>
+            
+            <article class="card arq-card">
+              <div class="card-head">
+                <div>
+                  <p class="eyebrow">Arquetipo</p>
+                  <h3>Explorador cultural del Magdalena</h3>
+                </div>
+                <span class="badge">Medio actual / alto potencial</span>
+              </div>
+              <div class="tags"><span class="pill">Evidencia Medio</span></div>
+              <p><strong>Motivación:</strong> Conocer historia, arquitectura, museo, relatos del río y patrimonio urbano sin una agenda masiva.</p>
+              <p><strong>Origen probable:</strong> Viajeros culturales, parejas, fotógrafos, visitantes de pueblos patrimonio y público interésado en memoria local.</p>
+              <p><strong>Servicios que activa:</strong> Museos, recorridos interpretativos, guianza, fotografía, cafés, artesanías, agenda cultural y relatos históricos.</p>
+              <p><strong>Oportunidad:</strong> Convertir los activos culturales en productos narrados: ruta del río, ruta del puente, ruta fotográfica y circuito patrimonial.</p>
+              <p class="message">Honda como destino para entender el río, caminar patrimonio y descubrir historias locales.</p>
+              <details>
+                <summary>Ver señales usadas</summary>
+                <ul><li><strong>Google Trends:</strong> Museo del Río Magdalena Honda, Puente Navarro Honda y centro histórico aparecen como términos patrimoniales de la batería.</li><li><strong>Oferta oficial:</strong> Cultura (43), eventos culturales (43) y patrimonio vivo (42) sostienen el potencial cultural.</li></ul>
+              </details>
+            </article>
+            
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Señal de oferta oficial</h2>
+        <p class="note">La oferta se usa para validar que cada arquetipo active servicios reales del municipio.</p>
+        <div class="bar-row"><div class="bar-label">Gastronomía</div><div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div><div class="bar-value">111</div></div>
+<div class="bar-row"><div class="bar-label">Alojamiento</div><div class="bar-track"><div class="bar-fill" style="width:82.9%"></div></div><div class="bar-value">92</div></div>
+<div class="bar-row"><div class="bar-label">Patrimonio</div><div class="bar-track"><div class="bar-fill" style="width:81.1%"></div></div><div class="bar-value">90</div></div>
+<div class="bar-row"><div class="bar-label">Experiencias turísticas culturales</div><div class="bar-track"><div class="bar-fill" style="width:71.2%"></div></div><div class="bar-value">79</div></div>
+<div class="bar-row"><div class="bar-label">Atractivos complementarios</div><div class="bar-track"><div class="bar-fill" style="width:51.4%"></div></div><div class="bar-value">57</div></div>
+<div class="bar-row"><div class="bar-label">Servicios turísticos</div><div class="bar-track"><div class="bar-fill" style="width:40.5%"></div></div><div class="bar-value">45</div></div>
+<div class="bar-row"><div class="bar-label">Cultura</div><div class="bar-track"><div class="bar-fill" style="width:38.7%"></div></div><div class="bar-value">43</div></div>
+<div class="bar-row"><div class="bar-label">Eventos culturales</div><div class="bar-track"><div class="bar-fill" style="width:38.7%"></div></div><div class="bar-value">43</div></div>
+      </article>
+      <article class="card">
+        <h2>Sentimiento por tipología</h2>
+        
+            <div class="stack-row">
+              <div class="stack-label">Alojamiento<span>147 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:59.9%">60%</div>
+                <div class="neu" style="width:13.6%">14%</div>
+                <div class="neg" style="width:26.5%">27%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Atractivos complementarios<span>19 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:84.2%">84%</div>
+                <div class="neu" style="width:10.5%">11%</div>
+                <div class="neg" style="width:5.3%">5%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Comercio turistico<span>8 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:87.5%">88%</div>
+                <div class="neu" style="width:12.5%">12%</div>
+                <div class="neg" style="width:0.0%">0%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Cultura<span>15 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:93.3%">93%</div>
+                <div class="neu" style="width:6.7%">7%</div>
+                <div class="neg" style="width:0.0%">0%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Gastronomía<span>158 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:66.5%">66%</div>
+                <div class="neu" style="width:14.6%">15%</div>
+                <div class="neg" style="width:19.0%">19%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Patrimonio<span>55 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:90.9%">91%</div>
+                <div class="neu" style="width:5.5%">5%</div>
+                <div class="neg" style="width:3.6%">4%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Servicios turísticos<span>7 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:100.0%">100%</div>
+                <div class="neu" style="width:0.0%">0%</div>
+                <div class="neg" style="width:0.0%">0%</div>
+              </div>
+            </div>
+            
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Demanda digital: términos con mayor señal</h2>
+        <div class="bar-row"><div class="bar-label">Honda Tolima</div><div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div><div class="bar-value">24.8</div></div>
+<div class="bar-row"><div class="bar-label">pueblos patrimonio Colombia</div><div class="bar-track"><div class="bar-fill" style="width:2.0%"></div></div><div class="bar-value">0.1</div></div>
+<div class="bar-row"><div class="bar-label">turismo cultural Colombia</div><div class="bar-track"><div class="bar-fill" style="width:2.0%"></div></div><div class="bar-value">0.1</div></div>
+<div class="bar-row"><div class="bar-label">que hacer en Honda Tolima</div><div class="bar-track"><div class="bar-fill" style="width:2.0%"></div></div><div class="bar-value">0.1</div></div>
+<div class="bar-row"><div class="bar-label">Museo del Río Magdalena Honda</div><div class="bar-track"><div class="bar-fill" style="width:2.0%"></div></div><div class="bar-value">0.1</div></div>
+<div class="bar-row"><div class="bar-label">Honda turismo</div><div class="bar-track"><div class="bar-fill" style="width:2.0%"></div></div><div class="bar-value">0.0</div></div>
+<div class="bar-row"><div class="bar-label">hoteles en Honda Tolima</div><div class="bar-track"><div class="bar-fill" style="width:2.0%"></div></div><div class="bar-value">0.0</div></div>
+        <p class="note">Google Trends es un índice relativo. Sirve para comparar señales, no para contar turistas ni búsquedas absolutas.</p>
+      </article>
+      <article class="card">
+        <h2>Temas de reseñas</h2>
+        <p><strong>Temas positivos:</strong></p><div><span class="pill">Gastronomía · 77</span><span class="pill">Servicio · 61</span><span class="pill">Servicio · 57</span><span class="pill">Alojamiento · 56</span><span class="pill">Paisaje y ambiente · 36</span><span class="pill">Precio · 31</span><span class="pill">Gastronomía · 29</span><span class="pill">Paisaje y ambiente · 27</span></div>
+        <p><strong>Alertas:</strong></p><div><span class="pill">Alojamiento · 24</span><span class="pill">Servicio · 21</span><span class="pill">Gastronomía · 18</span><span class="pill">Servicio · 16</span><span class="pill">Limpieza · 15</span><span class="pill">Precio · 14</span><span class="pill">Precio · 13</span><span class="pill">Gastronomía · 13</span></div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <h2>Consultas relacionadas que ayudan a perfilar intención</h2>
+      <p class="note"><strong>Lectura:</strong> Estas consultas se usan como señal de intención práctica o motivacional. En Honda se excluye ruido de marca antes de alimentar arquetipos.</p>
+      <div class="queries">
+        <div>
+          <p class="eyebrow">Top consultas</p>
+          <ul class="query-list"><li><span>honda tolima colombia</span><strong>100</strong></li><li><span>hotel honda tolima</span><strong>62</strong></li><li><span>clima honda tolima</span><strong>53</strong></li><li><span>hoteles honda tolima</span><strong>48</strong></li><li><span>hoteles en honda tolima</span><strong>33</strong></li><li><span>hotel en honda tolima</span><strong>25</strong></li><li><span>honda tolima mapa</span><strong>25</strong></li><li><span>temperatura en honda tolima</span><strong>22</strong></li><li><span>honda tolima turismo</span><strong>8</strong></li></ul>
+        </div>
+        <div>
+          <p class="eyebrow">Consultas en crecimiento</p>
+          <ul class="query-list"><li class="empty-row"><span>Sin consultas disponibles para este corte.</span><strong></strong></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Potencial internacional exploratorio</h2>
+        <p class="note">Se incluyen mercados exteriores con cualquier señal disponible, incluso si aparecen en un solo término. Es indicio exploratorio, no flujo de visitantes.</p>
+        <table>
+          <thead><tr><th>País</th><th class="num">Términos con señal</th><th>Términos donde apareció</th></tr></thead>
+          <tbody><tr><td>Dominica</td><td class='num'>1</td><td>things to do in Honda Tolima Colombia</td></tr><tr><td>Islas Marianas del Norte</td><td class='num'>1</td><td>Magdalena River Museum Honda</td></tr><tr><td>Perú</td><td class='num'>1</td><td>Honda Tolima tourism</td></tr><tr><td>Martinica</td><td class='num'>1</td><td>Magdalena River Museum Honda</td></tr></tbody>
+        </table>
+      </article>
+      <article class="card">
+        <h2>Uso recomendado</h2>
+        <p>Estos perfiles sirven para priorizar comunicación, paquetes, rutas y contenidos digitales por municipio.</p>
+        <p class="note">No representan tamaños de mercado. Para medir participación real de cada segmento se requeriría encuesta, conteos de visitantes o datos transaccionales.</p>
+      </article>
+    </section>
+
+    <footer>Producto 4 · Honda, Tolima · Generado el 2026-07-17.</footer>
+  </main>
+</body>
+</html>

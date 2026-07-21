@@ -3,152 +3,436 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tablero integral Buga - Pueblos Patrimoniales</title>
+  <title>Tablero global - Pueblos Patrimoniales</title>
   <style>
     :root {
-      --bg:#f5f7fb; --card:#ffffff; --ink:#142033; --muted:#677489;
-      --line:#dfe6ef; --brand:#245b6b; --brand2:#8a5a2c; --accent:#eab85e;
+      --bg:#f5f7f8;
+      --panel:#ffffff;
+      --ink:#14213d;
+      --muted:#5c6b73;
+      --line:#d9e2e7;
+      --brand:#1b4332;
+      --brand2:#2a7f73;
+      --accent:#bc6c25;
     }
     * { box-sizing:border-box; }
-    body { margin:0; font-family:Segoe UI, Roboto, Arial, sans-serif; color:var(--ink); background:var(--bg); }
+    body {
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+    }
     header {
-      padding:28px 34px 18px;
-      background:linear-gradient(135deg,#17394a,#216d67 55%,#8a5a2c);
+      padding:24px 30px 18px;
+      background:#1b263b;
       color:white;
     }
-    header h1 { margin:0 0 8px; font-size:30px; letter-spacing:-.02em; }
-    header p { margin:0; max-width:1100px; line-height:1.45; opacity:.92; }
+    header h1 {
+      margin:0;
+      font-size:28px;
+      letter-spacing:0;
+    }
+    header p {
+      margin:8px 0 0;
+      max-width:1040px;
+      color:#e9f2f2;
+      line-height:1.45;
+    }
+    .summary {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(150px,1fr));
+      gap:12px;
+      padding:16px 22px;
+      background:#eef3f5;
+      border-bottom:1px solid var(--line);
+    }
+    .kpi {
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:13px 14px;
+    }
+    .kpi strong {
+      display:block;
+      font-size:24px;
+      line-height:1;
+    }
+    .kpi span {
+      display:block;
+      margin-top:5px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.3;
+    }
     .tabs {
-      display:grid; grid-template-columns:repeat(4,minmax(170px,1fr)); gap:12px;
-      padding:16px 22px; background:#edf2f7; border-bottom:1px solid var(--line);
-      position:sticky; top:0; z-index:20;
+      display:grid;
+      grid-template-columns:repeat(4,minmax(170px,1fr));
+      gap:10px;
+      padding:14px 22px;
+      background:#f8fafb;
+      border-bottom:1px solid var(--line);
+      position:sticky;
+      top:0;
+      z-index:20;
     }
     .tab-button {
-      border:1px solid var(--line); background:var(--card); border-radius:16px; padding:12px 14px;
-      text-align:left; cursor:pointer; color:var(--ink); box-shadow:0 8px 20px rgba(20,32,51,.06);
+      border:1px solid var(--line);
+      background:var(--panel);
+      border-radius:8px;
+      padding:11px 13px;
+      text-align:left;
+      cursor:pointer;
+      color:var(--ink);
     }
-    .tab-button span { display:block; font-weight:800; font-size:14px; }
-    .tab-button small { display:block; margin-top:4px; color:var(--muted); line-height:1.25; }
-    .tab-button.active { border-color:#95d2ca; background:#eaf7f4; outline:2px solid rgba(36,91,107,.12); }
-    main { padding:18px 22px 26px; }
-    .tab-panel { display:none; }
-    .tab-panel.active { display:block; }
-    .panel-toolbar {
-      display:flex; justify-content:space-between; gap:16px; align-items:center;
-      background:var(--card); border:1px solid var(--line); border-radius:18px;
-      padding:14px 18px; margin-bottom:12px; box-shadow:0 8px 22px rgba(20,32,51,.06);
+    .tab-button span {
+      display:block;
+      font-weight:800;
+      font-size:14px;
     }
-    .panel-toolbar h2 { margin:0; font-size:19px; }
-    .panel-toolbar p { margin:4px 0 0; color:var(--muted); }
-    .panel-toolbar a {
-      color:white; background:var(--brand); padding:9px 12px; border-radius:999px;
-      text-decoration:none; font-size:13px; font-weight:700; white-space:nowrap;
+    .tab-button small {
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      line-height:1.25;
     }
+    .tab-button.active {
+      border-color:#82c9bd;
+      background:#edf8f5;
+      box-shadow:0 0 0 3px rgba(42,127,115,.10);
+    }
+    main { padding:16px 22px 26px; }
+    .panel { display:none; }
+    .panel.active { display:block; }
+    .toolbar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:13px 15px;
+      margin-bottom:12px;
+    }
+    .toolbar h2 {
+      margin:0;
+      font-size:18px;
+      letter-spacing:0;
+    }
+    .toolbar p {
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .control-row {
+      display:flex;
+      align-items:end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    label {
+      display:block;
+      font-size:12px;
+      font-weight:750;
+      color:#334155;
+      margin-bottom:5px;
+    }
+    select {
+      min-width:240px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:9px 11px;
+      font-size:14px;
+      background:#fff;
+      color:var(--ink);
+    }
+    .open-link {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 12px;
+      border-radius:8px;
+      background:var(--brand2);
+      color:white;
+      text-decoration:none;
+      font-size:13px;
+      font-weight:750;
+      white-space:nowrap;
+    }
+    .insight-strip {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(130px,1fr));
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .mini {
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:11px 12px;
+    }
+    .mini strong { display:block; font-size:20px; }
+    .mini span { color:var(--muted); font-size:12px; }
     iframe {
-      width:100%; height:calc(100vh - 205px); min-height:680px; border:1px solid var(--line);
-      border-radius:18px; background:white; box-shadow:0 12px 30px rgba(20,32,51,.08);
+      width:100%;
+      height:calc(100vh - 285px);
+      min-height:690px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:white;
     }
-    footer { color:var(--muted); font-size:12px; padding:0 22px 18px; }
-    @media (max-width:950px) {
-      .tabs { grid-template-columns:1fr; position:static; }
-      header { padding:24px 20px; }
-      main { padding:14px; }
-      .panel-toolbar { align-items:flex-start; flex-direction:column; }
-      iframe { min-height:760px; height:76vh; }
+    .placeholder {
+      min-height:420px;
+      display:grid;
+      align-content:center;
+      justify-items:start;
+      gap:10px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:28px;
+    }
+    .placeholder h2 { margin:0; font-size:22px; }
+    .placeholder p { margin:0; max-width:760px; color:var(--muted); line-height:1.5; }
+    footer {
+      padding:0 22px 18px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    @media (max-width:1000px) {
+      .summary, .tabs, .insight-strip { grid-template-columns:1fr 1fr; }
+      .toolbar { align-items:flex-start; flex-direction:column; }
+      iframe { min-height:760px; height:74vh; }
+    }
+    @media (max-width:640px) {
+      header { padding-left:18px; padding-right:18px; }
+      main, .summary, .tabs, footer { padding-left:14px; padding-right:14px; }
+      .summary, .tabs, .insight-strip { grid-template-columns:1fr; }
+      select { min-width:100%; width:100%; }
+      .control-row { width:100%; }
+      .open-link { width:100%; }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Tablero integral del piloto de Buga</h1>
-    <p>Consulta en un solo lugar los cuatro productos del piloto: oferta turística, análisis de reseñas, interés potencial por búsquedas web, capa internacional exploratoria y arquetipos de turistas. Las explicaciones metodológicas completas se documentan en el informe integral.</p>
+    <h1>Tablero global - Pueblos Patrimoniales</h1>
+    <p>Consulta los productos del proyecto en una sola interfaz. Cada producto tiene su propio filtro de municipio para que el tablero pueda crecer a medida que se incorporen nuevos pueblos patrimoniales.</p>
   </header>
-  <nav class="tabs" aria-label="Pestañas del tablero">
-    
-        <button class="tab-button active" data-target="oferta">
-          <span>1. Oferta turística</span>
-          <small>Mapa e inventario oficial depurado</small>
-        </button>
-        
 
-        <button class="tab-button " data-target="resenas">
-          <span>2. Análisis de reseñas</span>
-          <small>Sentimiento, temas y FODA</small>
-        </button>
-        
+  <section class="summary">
+    <article class="kpi"><strong id="kpiMunicipios">0</strong><span>municipios con Producto 2</span></article>
+    <article class="kpi"><strong id="kpiOferta">0</strong><span>lugares en base oficial del Producto 1</span></article>
+    <article class="kpi"><strong id="kpiResenas">0</strong><span>reseñas analizadas en Producto 2</span></article>
+    <article class="kpi"><strong id="kpiUnicas">0</strong><span>reseñas únicas extraídas</span></article>
+  </section>
 
-        <button class="tab-button " data-target="interes">
-          <span>3. Interés potencial por búsquedas web</span>
-          <small>Google Trends nacional e internacional</small>
-        </button>
-        
-
-        <button class="tab-button " data-target="arquetipos">
-          <span>4. Arquetipos de turistas</span>
-          <small>Perfiles accionables para producto y comunicación</small>
-        </button>
-        
+  <nav class="tabs" aria-label="Productos">
+    <button class="tab-button active" data-target="producto1"><span>1. Oferta turística</span><small>Mapa e inventario oficial</small></button>
+    <button class="tab-button" data-target="producto2"><span>2. Reseñas</span><small>Sentimiento, temas y FODA</small></button>
+    <button class="tab-button" data-target="producto3"><span>3. Interés web</span><small>Google Trends y señales de demanda</small></button>
+    <button class="tab-button" data-target="producto4"><span>4. Arquetipos</span><small>Síntesis por perfil turístico</small></button>
   </nav>
+
   <main>
-    
-        <section class="tab-panel active" id="oferta">
-          <div class="panel-toolbar">
-            <div>
-              <h2>1. Oferta turística</h2>
-              <p>Base oficial de lugares incluidos para Buga.</p>
-            </div>
-            <a href="oferta/index.html" target="_blank" rel="noopener">Abrir esta pestaña</a>
+    <section class="panel active" id="producto1">
+      <div class="toolbar">
+        <div>
+          <h2>Producto 1 - Oferta turística</h2>
+          <p>El selector controla el filtro de municipio del mapa consolidado.</p>
+        </div>
+        <div class="control-row">
+          <div>
+            <label for="p1Municipio">Municipio</label>
+            <select id="p1Municipio"></select>
           </div>
-          <iframe title="1. Oferta turística" src="oferta/index.html" loading="lazy"></iframe>
-        </section>
-        
+          <a class="open-link" id="p1Open" href="#" target="_blank" rel="noopener">Abrir producto</a>
+        </div>
+      </div>
+      <iframe id="p1Frame" title="Producto 1 - Oferta turística"></iframe>
+    </section>
 
-        <section class="tab-panel " id="resenas">
-          <div class="panel-toolbar">
-            <div>
-              <h2>2. Análisis de reseñas</h2>
-              <p>Muestra de lugares priorizados y reseñas con texto analizadas.</p>
-            </div>
-            <a href="resenas/index.html" target="_blank" rel="noopener">Abrir esta pestaña</a>
+    <section class="panel" id="producto2">
+      <div class="toolbar">
+        <div>
+          <h2>Producto 2 - Análisis de reseñas</h2>
+          <p>Use el filtro para revisar el tablero agregado o el tablero específico de cada municipio.</p>
+        </div>
+        <div class="control-row">
+          <div>
+            <label for="p2Municipio">Municipio</label>
+            <select id="p2Municipio"></select>
           </div>
-          <iframe title="2. Análisis de reseñas" src="resenas/index.html" loading="lazy"></iframe>
-        </section>
-        
+          <a class="open-link" id="p2Open" href="#" target="_blank" rel="noopener">Abrir producto</a>
+        </div>
+      </div>
+      <div class="insight-strip" id="p2Insights"></div>
+      <iframe id="p2Frame" title="Producto 2 - Análisis de reseñas"></iframe>
+    </section>
 
-        <section class="tab-panel " id="interes">
-          <div class="panel-toolbar">
-            <div>
-              <h2>3. Interés potencial por búsquedas web</h2>
-              <p>Señales relativas nacionales e internacionales; no equivalen a visitantes reales.</p>
-            </div>
-            <a href="interes-web/index.html" target="_blank" rel="noopener">Abrir esta pestaña</a>
+    <section class="panel" id="producto3">
+      <div class="toolbar">
+        <div>
+          <h2>Producto 3 - Interés potencial por búsquedas web</h2>
+          <p>Seleccione un municipio para revisar el tablero de Google Trends e interés web.</p>
+        </div>
+        <div class="control-row">
+          <div>
+            <label for="p3Municipio">Municipio</label>
+            <select id="p3Municipio"></select>
           </div>
-          <iframe title="3. Interés potencial por búsquedas web" src="interes-web/index.html" loading="lazy"></iframe>
-        </section>
-        
+          <a class="open-link" id="p3Open" href="#" target="_blank" rel="noopener">Abrir producto</a>
+        </div>
+      </div>
+      <div class="placeholder" id="p3Placeholder">
+        <h2>Producto 3 no disponible para este municipio</h2>
+        <p>Cuando se generen los datos de Google Trends o interés web, esta sección mostrará el tablero embebido.</p>
+      </div>
+      <iframe id="p3Frame" title="Producto 3 - Interés web" style="display:none"></iframe>
+    </section>
 
-        <section class="tab-panel " id="arquetipos">
-          <div class="panel-toolbar">
-            <div>
-              <h2>4. Arquetipos de turistas</h2>
-              <p>Síntesis interpretativa de oferta, reseñas, búsquedas web y revisión web liviana.</p>
-            </div>
-            <a href="arquetipos/index.html" target="_blank" rel="noopener">Abrir esta pestaña</a>
+    <section class="panel" id="producto4">
+      <div class="toolbar">
+        <div>
+          <h2>Producto 4 - Arquetipos de turistas</h2>
+          <p>Seleccione un municipio para revisar la síntesis de oferta, reseñas e interés web en perfiles accionables.</p>
+        </div>
+        <div class="control-row">
+          <div>
+            <label for="p4Municipio">Municipio</label>
+            <select id="p4Municipio"></select>
           </div>
-          <iframe title="4. Arquetipos de turistas" src="arquetipos/index.html" loading="lazy"></iframe>
-        </section>
-        
+          <a class="open-link" id="p4Open" href="#" target="_blank" rel="noopener">Abrir producto</a>
+        </div>
+      </div>
+      <div class="placeholder" id="p4Placeholder">
+        <h2>Producto 4 no disponible para este municipio</h2>
+        <p>Cuando se genere la síntesis de arquetipos, esta sección mostrará el tablero embebido.</p>
+      </div>
+      <iframe id="p4Frame" title="Producto 4 - Arquetipos" style="display:none"></iframe>
+    </section>
   </main>
-  <footer>Generado el 2026-07-09 · Piloto Guadalajara de Buga, Valle del Cauca.</footer>
+  <footer>Generado el <span id="generated"></span>. Tablero local escalable por municipio y producto.</footer>
+
   <script>
-    const buttons = [...document.querySelectorAll(".tab-button")];
-    const panels = [...document.querySelectorAll(".tab-panel")];
+    const DATA = {"municipalities": [{"slug": "todos", "name": "Todos los municipios", "department": ""}, {"slug": "buga_valle", "name": "Buga", "department": "Valle del Cauca"}, {"slug": "honda_tolima", "name": "Honda", "department": "Tolima"}, {"slug": "barichara_santander", "name": "Barichara", "department": "Santander"}, {"slug": "santa_cruz_de_lorica_cordoba", "name": "Santa Cruz de Lorica", "department": "Córdoba"}], "product1": {"src": "oferta/index.html", "counts": {"Barichara": 329, "Buga": 413, "Honda": 281, "Santa Cruz de Lorica": 229}}, "product2": {"indexSrc": "resenas/index.html", "dashboards": {"buga_valle": "resenas/buga/index.html", "honda_tolima": "resenas/honda/index.html", "barichara_santander": "resenas/barichara/index.html", "santa_cruz_de_lorica_cordoba": "resenas/santa-cruz-de-lorica/index.html"}, "summary": {"honda_tolima": {"municipio": "Honda", "lugares_muestra": 58, "lugares_con_texto": 58, "resenas_analizadas": 409, "positivas": 287, "neutras": 50, "negativas": 72, "positivas_pct": 70.2, "negativas_pct": 17.6, "resenas_unicas": 539}, "barichara_santander": {"municipio": "Barichara", "lugares_muestra": 67, "lugares_con_texto": 67, "resenas_analizadas": 518, "positivas": 467, "neutras": 18, "negativas": 33, "positivas_pct": 90.2, "negativas_pct": 6.4, "resenas_unicas": 618}, "santa_cruz_de_lorica_cordoba": {"municipio": "Santa Cruz de Lorica", "lugares_muestra": 48, "lugares_con_texto": 48, "resenas_analizadas": 293, "positivas": 239, "neutras": 33, "negativas": 21, "positivas_pct": 81.6, "negativas_pct": 7.2, "resenas_unicas": 433}, "buga_valle": {"municipio": "Buga", "lugares_muestra": 75, "lugares_con_texto": 75, "resenas_analizadas": 516, "resenas_unicas": 697, "positivas": 416, "neutras": 46, "negativas": 54, "positivas_pct": 80.6, "negativas_pct": 10.5}}}, "product3": {"dashboards": {"todos": "interes-web/index.html", "buga_valle": "interes-web/buga/index.html", "honda_tolima": "interes-web/honda/index.html", "barichara_santander": "interes-web/barichara/index.html", "santa_cruz_de_lorica_cordoba": "interes-web/santa-cruz-de-lorica/index.html"}}, "product4": {"dashboards": {"todos": "arquetipos/index.html", "buga_valle": "arquetipos/buga/index.html", "honda_tolima": "arquetipos/honda/index.html", "barichara_santander": "arquetipos/barichara/index.html", "santa_cruz_de_lorica_cordoba": "arquetipos/santa-cruz-de-lorica/index.html"}}, "totals": {"p1_places": 1252, "p2_reviews": 1736, "p2_unique_reviews": 2287, "municipalities_p2": 4}, "generated": "2026-07-21"};
+    const municipalities = DATA.municipalities;
+    const product2Municipalities = municipalities.filter(item => item.slug === "todos" || DATA.product2.summary[item.slug]);
+
+    function formatNumber(value) {
+      return Number(value || 0).toLocaleString("es-CO");
+    }
+
+    function fillMunicipalitySelect(select, options) {
+      select.innerHTML = options.map(item => `<option value="${item.slug}">${item.name}${item.department ? " - " + item.department : ""}</option>`).join("");
+    }
+
     function activate(id) {
-      buttons.forEach(b => b.classList.toggle("active", b.dataset.target === id));
-      panels.forEach(p => p.classList.toggle("active", p.id === id));
+      document.querySelectorAll(".tab-button").forEach(button => button.classList.toggle("active", button.dataset.target === id));
+      document.querySelectorAll(".panel").forEach(panel => panel.classList.toggle("active", panel.id === id));
       history.replaceState(null, "", "#" + id);
     }
-    buttons.forEach(b => b.addEventListener("click", () => activate(b.dataset.target)));
+
+    function setProduct1Filter(slug) {
+      const src = slug === "todos" ? DATA.product1.src : `${DATA.product1.src}?municipio=${encodeURIComponent(slug)}`;
+      document.getElementById("p1Frame").src = src;
+      document.getElementById("p1Open").href = src;
+    }
+
+    function product2Metrics(slug) {
+      if (slug === "todos") {
+        const values = Object.values(DATA.product2.summary);
+        const totalReviews = values.reduce((acc, item) => acc + Number(item.resenas_analizadas || 0), 0);
+        const uniqueReviews = values.reduce((acc, item) => acc + Number(item.resenas_unicas || 0), 0);
+        const places = values.reduce((acc, item) => acc + Number(item.lugares_muestra || 0), 0);
+        const positives = values.reduce((acc, item) => acc + Number(item.positivas || 0), 0);
+        return {
+          title: "Todos los municipios",
+          reviews: totalReviews,
+          unique: uniqueReviews,
+          places,
+          positivePct: totalReviews ? (positives / totalReviews * 100).toFixed(1) : "0.0",
+        };
+      }
+      const item = DATA.product2.summary[slug] || {};
+      return {
+        title: item.municipio || "",
+        reviews: item.resenas_analizadas || 0,
+        unique: item.resenas_unicas || 0,
+        places: item.lugares_muestra || 0,
+        positivePct: item.positivas_pct || 0,
+      };
+    }
+
+    function renderProduct2Insights(slug) {
+      const metrics = product2Metrics(slug);
+      document.getElementById("p2Insights").innerHTML = `
+        <article class="mini"><strong>${metrics.title}</strong><span>filtro activo</span></article>
+        <article class="mini"><strong>${formatNumber(metrics.reviews)}</strong><span>reseñas analizadas</span></article>
+        <article class="mini"><strong>${formatNumber(metrics.places)}</strong><span>lugares de la muestra</span></article>
+        <article class="mini"><strong>${metrics.positivePct}%</strong><span>reseñas positivas</span></article>
+      `;
+    }
+
+    function setProduct2Frame(slug) {
+      const src = slug === "todos" ? DATA.product2.indexSrc : DATA.product2.dashboards[slug];
+      document.getElementById("p2Frame").src = src;
+      document.getElementById("p2Open").href = src;
+      renderProduct2Insights(slug);
+    }
+
+    function setOptionalProductFrame(productKey, slug) {
+      const dashboards = DATA[productKey].dashboards || {};
+      const frame = document.getElementById(productKey === "product3" ? "p3Frame" : "p4Frame");
+      const placeholder = document.getElementById(productKey === "product3" ? "p3Placeholder" : "p4Placeholder");
+      const open = document.getElementById(productKey === "product3" ? "p3Open" : "p4Open");
+      const src = dashboards[slug];
+      if (src) {
+        frame.src = src;
+        frame.style.display = "block";
+        placeholder.style.display = "none";
+        open.href = src;
+        open.style.display = "inline-flex";
+      } else {
+        frame.removeAttribute("src");
+        frame.style.display = "none";
+        placeholder.style.display = "grid";
+        open.removeAttribute("href");
+        open.style.display = "none";
+      }
+    }
+
+    document.querySelectorAll(".tab-button").forEach(button => button.addEventListener("click", () => activate(button.dataset.target)));
+
+    const p1Select = document.getElementById("p1Municipio");
+    const p2Select = document.getElementById("p2Municipio");
+    fillMunicipalitySelect(p1Select, municipalities);
+    fillMunicipalitySelect(p2Select, product2Municipalities);
+    fillMunicipalitySelect(document.getElementById("p3Municipio"), municipalities);
+    fillMunicipalitySelect(document.getElementById("p4Municipio"), municipalities);
+
+    document.getElementById("kpiMunicipios").textContent = formatNumber(DATA.totals.municipalities_p2);
+    document.getElementById("kpiOferta").textContent = formatNumber(DATA.totals.p1_places);
+    document.getElementById("kpiResenas").textContent = formatNumber(DATA.totals.p2_reviews);
+    document.getElementById("kpiUnicas").textContent = formatNumber(DATA.totals.p2_unique_reviews);
+    document.getElementById("generated").textContent = DATA.generated;
+
+    setProduct1Filter("todos");
+    p1Select.addEventListener("change", () => setProduct1Filter(p1Select.value));
+
+    p2Select.addEventListener("change", () => setProduct2Frame(p2Select.value));
+    setProduct2Frame("todos");
+
+    const p3Select = document.getElementById("p3Municipio");
+    const p4Select = document.getElementById("p4Municipio");
+    p3Select.value = "todos";
+    p4Select.value = "todos";
+    p3Select.addEventListener("change", () => setOptionalProductFrame("product3", p3Select.value));
+    p4Select.addEventListener("change", () => setOptionalProductFrame("product4", p4Select.value));
+    setOptionalProductFrame("product3", p3Select.value);
+    setOptionalProductFrame("product4", p4Select.value);
+
     const initial = location.hash.replace("#", "");
     if (initial && document.getElementById(initial)) activate(initial);
   </script>

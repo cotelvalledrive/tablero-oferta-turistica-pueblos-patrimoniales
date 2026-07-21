@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interés potencial por búsquedas web - Honda</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg:#f7faf9; --panel:#ffffff; --ink:#10202a; --muted:#64767f; --line:#dce8e8;
+      --teal:#2f8f83; --blue:#587aa7; --amber:#d9a441; --red:#b85b5b; --soft:#eef8f5;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--ink); }
+    header { padding:30px 34px 22px; color:white; background:linear-gradient(135deg,#1f766f,#253c63); }
+    h1 { margin:0; font-size:31px; letter-spacing:0; }
+    header p { max-width:1120px; margin:8px 0 0; color:#e8f3f5; line-height:1.5; }
+    main { padding:22px 32px 42px; max-width:1500px; margin:auto; }
+    .cards { display:grid; grid-template-columns:repeat(4,minmax(160px,1fr)); gap:14px; }
+    .card,.panel { background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:0 10px 24px rgba(16,32,42,.06); }
+    .card { padding:16px; }
+    .value { font-size:28px; font-weight:850; letter-spacing:0; }
+    .label { margin-top:4px; color:var(--muted); font-size:12px; line-height:1.35; }
+    .section-title { margin:24px 0 12px; display:flex; align-items:end; justify-content:space-between; gap:16px; }
+    .section-title h2 { margin:0; font-size:24px; }
+    .section-title p { margin:4px 0 0; color:var(--muted); }
+    .scope { display:inline-flex; padding:7px 11px; border-radius:999px; background:#e7f3f0; color:#1f6f68; font-size:12px; font-weight:800; white-space:nowrap; }
+    .grid { display:grid; grid-template-columns:1.05fr .95fr; gap:16px; margin-top:16px; }
+    .panel { padding:18px; min-width:0; }
+    .panel h3 { margin:0 0 10px; font-size:18px; }
+    .panel p { color:var(--muted); line-height:1.5; margin:6px 0 0; }
+    .note { background:#fff8e8; border:1px solid #ead09b; color:#6b4b18; padding:12px 14px; border-radius:14px; line-height:1.45; }
+    .bar-row { display:grid; grid-template-columns:minmax(160px,240px) 1fr 52px; gap:10px; align-items:center; margin:10px 0; }
+    .bar-label { color:#29434c; font-size:13px; }
+    .bar-label small { display:block; color:var(--muted); font-size:11px; margin-top:2px; }
+    .bar-track { height:13px; border-radius:999px; background:#e8eeee; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--teal),#68b7ad); }
+    .bar-value { text-align:right; font-weight:800; color:#1f6f68; font-size:13px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th,td { padding:9px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { background:#f3f7f7; color:#29434c; font-size:12px; }
+    .num { text-align:right; }
+    .badge { display:inline-flex; padding:4px 8px; border-radius:999px; font-weight:800; font-size:12px; }
+    .up { color:#166534; background:#dcfce7; }
+    .down { color:#991b1b; background:#fee2e2; }
+    .flat { color:#7c5a00; background:#fef3c7; }
+    .international { background:linear-gradient(135deg,#ffffff,#f3fbf8); border-left:5px solid var(--teal); }
+    .muted { color:var(--muted); font-size:12px; }
+    .empty { padding:12px 0; }
+    canvas { width:100% !important; max-height:360px; }
+    footer { color:var(--muted); font-size:12px; margin-top:24px; }
+    @media (max-width:1050px) { .cards,.grid { grid-template-columns:1fr; } main { padding:18px; } header { padding:24px 20px; } .bar-row { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Interés potencial por búsquedas web - Honda</h1>
+    <p>Tablero de Google Trends organizado en dos lecturas: señales nacionales en Colombia y señales internacionales potenciales. Los puntajes son índices relativos, no conteos absolutos de búsquedas ni visitantes.</p>
+  </header>
+  <main>
+    <section class="cards">
+      <div class="card"><div class="value">7/14</div><div class="label">términos nacionales con señal visible</div></div>
+      <div class="card"><div class="value">Honda Tolima</div><div class="label">término nacional líder en último año</div></div>
+      <div class="card"><div class="value">Tolima</div><div class="label">departamento con mayor interés relativo</div></div>
+      <div class="card"><div class="value">4</div><div class="label">mercados exteriores con señal</div></div>
+    </section>
+
+    <div class="section-title">
+      <div>
+        <h2>1. Lectura nacional - Colombia</h2>
+        <p>Esta sección muestra cómo se expresa el interés por Honda dentro de Colombia.</p>
+      </div>
+      <span class="scope">Ámbito: Colombia</span>
+    </div>
+
+    <section class="grid">
+      <article class="panel">
+        <h3>Términos nacionales con mayor señal</h3>
+        
+    <div class="bar-row">
+      <div class="bar-label">Honda Tolima<small>Promedio último año</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+      <div class="bar-value">24.8</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">pueblos patrimonio Colombia<small>Promedio último año</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.5%"></div></div>
+      <div class="bar-value">0.1</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">turismo cultural Colombia<small>Promedio último año</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.3%"></div></div>
+      <div class="bar-value">0.1</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">que hacer en Honda Tolima<small>Promedio último año</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.2%"></div></div>
+      <div class="bar-value">0.1</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Museo del Rio Magdalena Honda<small>Promedio último año</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.2%"></div></div>
+      <div class="bar-value">0.1</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Honda turismo<small>Promedio último año</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.2%"></div></div>
+      <div class="bar-value">0.0</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">hoteles en Honda Tolima<small>Promedio último año</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.0%"></div></div>
+      <div class="bar-value">0.0</div>
+    </div>
+    
+        <p class="muted">El valor corresponde al promedio relativo del último año. No equivale a número de búsquedas.</p>
+      </article>
+      <article class="panel">
+        <h3>Lectura por término</h3>
+        <table><thead><tr><th class="">Término</th><th class="">Grupo</th><th class="num">Prom. 2022 a julio de 2026</th><th class="num">Prom. último año</th><th class="num">Variación puntos</th><th class="num">Variación %</th><th class="">Lectura</th></tr></thead><tbody><tr><td class="">Honda Tolima</td><td class="">Destino</td><td class="num">25.1</td><td class="num">24.8</td><td class="num">-0.3</td><td class="num">-1.2%</td><td class=""><span class="badge flat">Estable / cambio leve</span></td></tr><tr><td class="">pueblos patrimonio Colombia</td><td class="">Contexto</td><td class="num">0.1</td><td class="num">0.1</td><td class="num">0.0</td><td class="num">6%</td><td class=""><span class="badge flat">Estable / cambio leve</span></td></tr><tr><td class="">turismo cultural Colombia</td><td class="">Contexto</td><td class="num">0.0</td><td class="num">0.1</td><td class="num">0.0</td><td class="num">75.0%</td><td class=""><span class="badge flat">Estable / cambio leve</span></td></tr><tr><td class="">que hacer en Honda Tolima</td><td class="">Destino</td><td class="num">0.1</td><td class="num">0.1</td><td class="num">0.0</td><td class="num">22.5%</td><td class=""><span class="badge flat">Estable / cambio leve</span></td></tr><tr><td class="">Museo del Rio Magdalena Honda</td><td class="">Patrimonio</td><td class="num">0.0</td><td class="num">0.1</td><td class="num">0.0</td><td class="num">368.9%</td><td class=""><span class="badge flat">Estable / cambio leve</span></td></tr><tr><td class="">Honda turismo</td><td class="">Destino</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">49.7%</td><td class=""><span class="badge flat">Estable / cambio leve</span></td></tr><tr><td class="">hoteles en Honda Tolima</td><td class="">Servicios</td><td class="num">0.1</td><td class="num">0.0</td><td class="num">-0.1</td><td class="num">-92.8%</td><td class=""><span class="badge flat">Estable / cambio leve</span></td></tr></tbody></table>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h3>Serie de tiempo nacional</h3>
+        <canvas id="timeChart"></canvas>
+        <p class="muted">Promedio mensual para suavizar la lectura semanal de Google Trends.</p>
+      </article>
+      <article class="panel">
+        <h3>Estacionalidad mensual nacional</h3>
+        <canvas id="seasonChart"></canvas>
+        <p class="muted">Promedio por mes para el término líder: Honda Tolima.</p>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h3>Departamentos nacionales con mayor interés</h3>
+        
+    <div class="bar-row">
+      <div class="bar-label">Tolima<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div>
+      <div class="bar-value">100</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Caldas<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:24.0%"></div></div>
+      <div class="bar-value">24</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Cundinamarca<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:12.0%"></div></div>
+      <div class="bar-value">12</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Bogotá<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:6.0%"></div></div>
+      <div class="bar-value">6</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Cesar<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:6.0%"></div></div>
+      <div class="bar-value">6</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Huila<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:6.0%"></div></div>
+      <div class="bar-value">6</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Risaralda<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:6.0%"></div></div>
+      <div class="bar-value">6</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Boyacá<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:5.0%"></div></div>
+      <div class="bar-value">5</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Caquetá<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:5.0%"></div></div>
+      <div class="bar-value">5</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label">Quindío<small>Honda Tolima</small></div>
+      <div class="bar-track"><div class="bar-fill" style="width:5.0%"></div></div>
+      <div class="bar-value">5</div>
+    </div>
+    
+        <p class="muted">Se muestra el término base en cada barra para dejar claro qué búsqueda explica el ranking territorial.</p>
+      </article>
+      <article class="panel">
+        <h3>Detalle territorial nacional</h3>
+        <table><thead><tr><th class="">Periodo</th><th class="">Término base</th><th class="">Departamento</th><th class="num">Puntaje relativo</th></tr></thead><tbody><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Tolima</td><td class="num">100</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Caldas</td><td class="num">24</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Cundinamarca</td><td class="num">12</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Bogotá</td><td class="num">6</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Cesar</td><td class="num">6</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Huila</td><td class="num">6</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Risaralda</td><td class="num">6</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Boyacá</td><td class="num">5</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Caquetá</td><td class="num">5</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">Quindío</td><td class="num">5</td></tr></tbody></table>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h3>Top consultas nacionales</h3>
+        <p class="muted">Consultas relacionadas con mayor interés relativo en Colombia.</p>
+        <table><thead><tr><th class="">Periodo</th><th class="">Término base</th><th class="">Consulta</th><th class="num">Puntaje</th></tr></thead><tbody><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">honda tolima colombia</td><td class="num">100</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">hotel honda tolima</td><td class="num">62</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">clima honda tolima</td><td class="num">53</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">hoteles honda tolima</td><td class="num">48</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">hoteles en honda tolima</td><td class="num">33</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">hotel en honda tolima</td><td class="num">25</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">honda tolima mapa</td><td class="num">25</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">temperatura en honda tolima</td><td class="num">22</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">honda tolima turismo</td><td class="num">8</td></tr><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">temblor hoy honda tolima</td><td class="num">2</td></tr></tbody></table>
+      </article>
+      <article class="panel">
+        <h3>Consultas nacionales en crecimiento</h3>
+        <p class="muted">Consultas que crecieron frente al periodo anterior. Breakout indica crecimiento muy alto desde una base baja.</p>
+        <table><thead><tr><th class="">Periodo</th><th class="">Término base</th><th class="">Consulta</th><th class="num">Cambio</th></tr></thead><tbody><tr><td class="">Último año</td><td class="">Honda Tolima</td><td class="">temblor hoy honda tolima</td><td class="num">Breakout</td></tr></tbody></table>
+      </article>
+    </section>
+
+    <div class="section-title">
+      <div>
+        <h2>2. Lectura internacional potencial</h2>
+        <p>Esta sección muestra países desde donde aparecen búsquedas relacionadas con Honda. No mide nacionalidad ni visitantes reales.</p>
+      </div>
+      <span class="scope">Ámbito: mundo</span>
+    </div>
+
+    <section class="grid">
+      <article class="panel international">
+        <h3>Mercados exteriores con señal</h3>
+        <p class="note">Se incluyen países exteriores con cualquier señal disponible, incluso si aparecen en un solo término. En municipios poco conocidos esta lectura se usa como indicio exploratorio, no como flujo de visitantes.</p>
+        <table><thead><tr><th class="">Periodo</th><th class="">País</th><th class="num">Términos con señal</th><th class="num">Puntaje máximo relativo</th><th class="">Términos donde apareció</th></tr></thead><tbody><tr><td class="">2022 a julio de 2026</td><td class="">Dominica</td><td class="num">1</td><td class="num">100</td><td class="">things to do in Honda Tolima Colombia</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Islas Marianas del Norte</td><td class="num">1</td><td class="num">100</td><td class="">Magdalena River Museum Honda</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Perú</td><td class="num">1</td><td class="num">100</td><td class="">Honda Tolima tourism</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Martinica</td><td class="num">1</td><td class="num">17</td><td class="">Magdalena River Museum Honda</td></tr></tbody></table>
+        <p class="muted"><strong>Puntaje máximo relativo:</strong> mayor valor observado en Google Trends para ese país dentro de los términos analizados. No es número de búsquedas ni número de visitantes.</p>
+      </article>
+      <article class="panel">
+        <h3>Cómo usar esta lectura</h3>
+        <p>La lectura internacional se debe usar como oportunidad exploratoria de comunicación, no como estimación de flujo turístico.</p>
+        <p>Los contenidos recomendados son prácticos: atractivos principales, cómo llegar, horarios, alojamiento, seguridad, qué hacer en Honda y planes culturales.</p>
+        <p class="note">Cuando un país aparece con puntaje alto en un solo término, se conserva en el tablero y se interpreta con cautela por la normalización de Google Trends.</p>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h3>Top consultas internacionales</h3>
+        <p class="muted">Consultas relacionadas útiles para lectura turística fuera de Colombia. Se excluye ruido no turístico de esta vista.</p>
+        <table><thead><tr><th class="">Periodo</th><th class="">Término base</th><th class="">Consulta</th><th class="num">Puntaje</th></tr></thead><tbody><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">honda tolima colombia</td><td class="num">100</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">honda tolima hoteles</td><td class="num">60</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">hotel honda tolima</td><td class="num">59</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">clima honda tolima</td><td class="num">50</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">hoteles en honda tolima</td><td class="num">44</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">hotel en honda tolima</td><td class="num">27</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">honda tolima mapa</td><td class="num">26</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">temperatura en honda tolima</td><td class="num">25</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">que hacer en honda tolima</td><td class="num">16</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">codigo postal honda tolima</td><td class="num">16</td></tr></tbody></table>
+      </article>
+      <article class="panel">
+        <h3>Consultas internacionales en crecimiento</h3>
+        <p class="muted">Consultas que crecieron dentro de la búsqueda mundial. Breakout indica crecimiento muy alto desde una base baja.</p>
+        <table><thead><tr><th class="">Periodo</th><th class="">Término base</th><th class="">Consulta</th><th class="num">Cambio</th></tr></thead><tbody><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">impuesto predial honda tolima</td><td class="num">+70%</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">codigo postal honda tolima</td><td class="num">+60%</td></tr><tr><td class="">2022 a julio de 2026</td><td class="">Honda Tolima</td><td class="">que hacer en honda tolima</td><td class="num">+50%</td></tr></tbody></table>
+      </article>
+    </section>
+
+    <section class="panel" style="margin-top:16px">
+      <h3>Cómo leer los puntajes de Google Trends</h3>
+      <p><strong>100</strong> representa el mayor interés relativo dentro de la consulta analizada. Los demás valores se leen en relación con ese máximo. Por eso el tablero sirve para comparar señales, no para contar turistas ni búsquedas absolutas.</p>
+    </section>
+
+    <footer>Producto 3 · Honda, Tolima · Google Trends nacional e internacional · Corte: julio de 2026.</footer>
+  </main>
+  <script>
+    const CHART_DATA = {"monthly": {"labels": ["2021-12", "2022-01", "2022-02", "2022-03", "2022-04", "2022-05", "2022-06", "2022-07", "2022-08", "2022-09", "2022-10", "2022-11", "2022-12", "2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06", "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07"], "series": [{"label": "Honda Tolima", "data": [39.0, 38.4, 20.8, 22.5, 28.0, 18.6, 30.2, 24.8, 23.0, 19.8, 22.0, 22.8, 29.5, 41.0, 26.2, 22.0, 26.2, 20.2, 25.8, 25.2, 23.5, 21.2, 24.4, 22.0, 34.4, 36.8, 24.2, 24.0, 18.0, 22.0, 22.4, 21.2, 23.5, 22.6, 20.8, 20.8, 34.0, 32.0, 21.5, 23.2, 23.5, 19.8, 24.8, 24.8, 25.0, 23.0, 24.8, 24.0, 37.2, 35.2, 23.5, 23.2, 19.0, 20.0, 20.2, 23.5]}, {"label": "pueblos patrimonio Colombia", "data": [0.0, 0.0, 0.6, 0.5, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6, 1.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6]}, {"label": "turismo cultural Colombia", "data": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 0.0, 0.0]}, {"label": "que hacer en Honda Tolima", "data": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}, {"label": "Museo del Rio Magdalena Honda", "data": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}, {"label": "Honda turismo", "data": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.0]}]}, "season": {"term": "Honda Tolima", "labels": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"], "data": [36.69, 23.29, 23.07, 22.44, 20.04, 23.92, 24.08, 24.09, 21.95, 23.32, 22.82, 34.65]}};
+    const palette = ["#2f8f83", "#587aa7", "#d9a441", "#b85b5b", "#6d7d8c", "#8c6bb1"];
+
+    function drawTimeChart() {
+      const canvas = document.getElementById("timeChart");
+      if (!canvas || typeof Chart === "undefined") return;
+      new Chart(canvas, {
+        type: "line",
+        data: {
+          labels: CHART_DATA.monthly.labels,
+          datasets: CHART_DATA.monthly.series.map((serie, i) => ({
+            label: serie.label,
+            data: serie.data,
+            borderColor: palette[i % palette.length],
+            backgroundColor: palette[i % palette.length],
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.25
+          }))
+        },
+        options: {
+          responsive: true,
+          interaction: { mode: "index", intersect: false },
+          plugins: { legend: { position: "bottom" } },
+          scales: { y: { beginAtZero: true, title: { display: true, text: "Índice Google Trends" } } }
+        }
+      });
+    }
+
+    function drawSeasonChart() {
+      const canvas = document.getElementById("seasonChart");
+      if (!canvas || typeof Chart === "undefined") return;
+      new Chart(canvas, {
+        type: "bar",
+        data: {
+          labels: CHART_DATA.season.labels,
+          datasets: [{
+            label: CHART_DATA.season.term,
+            data: CHART_DATA.season.data,
+            backgroundColor: "#d9a441"
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, title: { display: true, text: "Promedio relativo" } } }
+        }
+      });
+    }
+
+    drawTimeChart();
+    drawSeasonChart();
+  </script>
+</body>
+</html>

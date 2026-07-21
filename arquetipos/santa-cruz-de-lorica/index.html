@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arquetipos de turistas - Santa Cruz de Lorica</title>
+  <style>
+    :root {
+      --bg:#f7faf9; --card:#ffffff; --ink:#10202a; --muted:#64767f; --line:#dce8e8;
+      --teal:#2f8f83; --blue:#587aa7; --amber:#d9a441; --red:#b85b5b; --soft:#eef8f5;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--ink); }
+    header { padding:34px 42px 24px; background:linear-gradient(135deg,#1f766f,#253c63); color:white; }
+    header h1 { margin:0 0 8px; font-size:32px; letter-spacing:0; }
+    header p { margin:0; max-width:1080px; line-height:1.5; color:#e8f3f5; }
+    main { padding:24px 32px 42px; max-width:1500px; margin:auto; }
+    .kpis { display:grid; grid-template-columns:repeat(4,minmax(160px,1fr)); gap:14px; margin-top:-42px; }
+    .kpi,.card { background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 10px 24px rgba(16,32,42,.06); }
+    .kpi { padding:18px; }
+    .kpi span { color:var(--muted); font-size:13px; }
+    .kpi strong { display:block; font-size:30px; margin-top:4px; }
+    .arqs { display:grid; grid-template-columns:repeat(2,minmax(320px,1fr)); gap:16px; margin-top:18px; }
+    .grid { display:grid; grid-template-columns:1.1fr .9fr; gap:16px; margin-top:16px; }
+    .card { padding:22px; min-width:0; }
+    .arq-card { min-height:340px; }
+    .card-head { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; }
+    h2 { margin:0 0 14px; font-size:22px; }
+    h3 { margin:0; font-size:21px; }
+    .eyebrow { margin:0 0 5px; text-transform:uppercase; font-size:11px; color:var(--teal); font-weight:800; letter-spacing:.12em; }
+    .badge { background:#fef3c7; color:#7c5a00; padding:7px 10px; border-radius:999px; font-size:12px; font-weight:800; white-space:nowrap; }
+    .tags { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+    .pill { display:inline-flex; align-items:center; background:#e7f3f0; color:#1f6f68; border-radius:999px; padding:6px 10px; font-size:12px; margin:3px; }
+    p { line-height:1.48; }
+    .message { background:#f3f7f7; border-left:4px solid var(--teal); padding:10px 12px; border-radius:8px; color:#29434c; }
+    details { margin-top:10px; border-top:1px solid var(--line); padding-top:10px; color:var(--muted); }
+    summary { cursor:pointer; color:#1f6f68; font-weight:800; }
+    li { margin:7px 0; line-height:1.35; }
+    .bar-row { display:grid; grid-template-columns:minmax(170px,240px) 1fr 52px; gap:10px; align-items:center; margin:9px 0; }
+    .bar-label { color:var(--muted); font-size:13px; }
+    .bar-track { background:#e8eeee; border-radius:999px; height:13px; overflow:hidden; }
+    .bar-fill { height:100%; background:linear-gradient(90deg,var(--teal),#68b7ad); border-radius:999px; }
+    .bar-value { font-weight:800; color:#1f6f68; font-size:13px; text-align:right; }
+    .stack-row { margin:12px 0; }
+    .stack-label { display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:5px; }
+    .stack-label span { opacity:.8; }
+    .stack { display:flex; height:24px; overflow:hidden; border-radius:999px; background:#eee; color:white; font-size:11px; font-weight:800; }
+    .stack div { display:flex; align-items:center; justify-content:center; min-width:24px; }
+    .pos { background:#2f9e73; } .neu { background:var(--amber); } .neg { background:var(--red); }
+    .queries { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .query-list { padding-left:0; list-style:none; margin:0; }
+    .query-list li { display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid var(--line); padding:8px 0; }
+    .query-list strong { color:#1f6f68; white-space:nowrap; }
+    .note { background:#fff8e8; border:1px solid #ead09b; color:#6b4b18; padding:12px 14px; border-radius:14px; line-height:1.45; }
+    .muted { color:var(--muted); font-size:13px; }
+    .empty { padding:8px 0; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th,td { padding:9px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { background:#f3f7f7; color:#29434c; font-size:12px; }
+    .num { text-align:right; }
+    footer { margin-top:22px; color:var(--muted); font-size:12px; }
+    @media (max-width:1000px) { .kpis,.grid,.arqs,.queries { grid-template-columns:1fr; } main { padding:18px; } header { padding:26px 22px 52px; } .bar-row { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Arquetipos de turistas potenciales - Santa Cruz de Lorica</h1>
+    <p>Tablero ejecutivo construido con señales de oferta oficial, reseñas de Google Maps y Google Trends. Los arquetipos son perfiles interpretativos para orientar producto turístico y comunicación; no equivalen a una encuesta de visitantes.</p>
+  </header>
+  <main>
+    <section class="kpis">
+      <div class="kpi"><span>Señales de oferta</span><strong>531</strong></div>
+      <div class="kpi"><span>Reseñas analizadas</span><strong>293</strong></div>
+      <div class="kpi"><span>Reseñas positivas</span><strong>0%</strong></div>
+      <div class="kpi"><span>Arquetipos definidos</span><strong>4</strong></div>
+    </section>
+
+    <section class="arqs">
+      
+            <article class="card arq-card">
+              <div class="card-head">
+                <div>
+                  <p class="eyebrow">Arquetipo</p>
+                  <h3>Explorador patrimonial del centro histórico</h3>
+                </div>
+                <span class="badge">Alto</span>
+              </div>
+              <div class="tags"><span class="pill">Evidencia Alto</span></div>
+              <p><strong>Motivación:</strong> Conocer el centro histórico, arquitectura republicana, mercado público, malecón y patrimonio urbano.</p>
+              <p><strong>Origen probable:</strong> Córdoba, Sucre, Bolívar, visitantes regionales y viajeros de pueblos patrimonio del Caribe.</p>
+              <p><strong>Servicios que activa:</strong> Patrimonio, recorridos urbanos, malecón, mercado público, guianza, fotografía y comercio local.</p>
+              <p><strong>Oportunidad:</strong> Estructurar una ruta patrimonial caminable con relato del río, mercado, arquitectura y memoria local.</p>
+              <p class="message">Lorica: patrimonio caribeño, río y arquitectura para recorrer con calma.</p>
+              <details>
+                <summary>Ver señales usadas</summary>
+                <ul><li><strong>Oferta oficial:</strong> Patrimonio (114) es la principal señal de oferta del municipio.</li><li><strong>Google Trends:</strong> Lorica Córdoba aumenta frente al promedio histórico y Santa Cruz de Lorica mantiene señal de destino.</li><li><strong>Reseñas:</strong> Patrimonio y cultura aparecen entre los temas positivos de la categoría patrimonial.</li></ul>
+              </details>
+            </article>
+            
+            <article class="card arq-card">
+              <div class="card-head">
+                <div>
+                  <p class="eyebrow">Arquetipo</p>
+                  <h3>Visitante gastronómico de mercado y río</h3>
+                </div>
+                <span class="badge">Alto</span>
+              </div>
+              <div class="tags"><span class="pill">Evidencia Alto</span></div>
+              <p><strong>Motivación:</strong> Comer, visitar el mercado, probar cocina local y combinarlo con un recorrido urbano corto.</p>
+              <p><strong>Origen probable:</strong> Familias y grupos regionales que hacen visita de día o parada gastronómica.</p>
+              <p><strong>Servicios que activa:</strong> Restaurantes, mercado público, comercio turístico, malecón, cafés y productos locales.</p>
+              <p><strong>Oportunidad:</strong> Crear una ruta de sabores de Lorica conectada con mercado, patrimonio y malecón.</p>
+              <p class="message">Lorica se descubre caminando, comiendo y mirando el río.</p>
+              <details>
+                <summary>Ver señales usadas</summary>
+                <ul><li><strong>Oferta oficial:</strong> Gastronomía (107) y comercio turístico (52) sostienen el perfil.</li><li><strong>Reseñas:</strong> Las reseñas positivas destacan servicio, gastronomía, precio y paisaje/ambiente.</li></ul>
+              </details>
+            </article>
+            
+            <article class="card arq-card">
+              <div class="card-head">
+                <div>
+                  <p class="eyebrow">Arquetipo</p>
+                  <h3>Visitante regional de escapada corta</h3>
+                </div>
+                <span class="badge">Medio-alto</span>
+              </div>
+              <div class="tags"><span class="pill">Evidencia Medio</span></div>
+              <p><strong>Motivación:</strong> Hacer una visita corta desde municipios cercanos para caminar, comer y conocer el pueblo patrimonio.</p>
+              <p><strong>Origen probable:</strong> Montería, Córdoba, Sucre, Bajo Sinú y Caribe cercano.</p>
+              <p><strong>Servicios que activa:</strong> Alojamiento, restaurantes, atractivos complementarios, comercio, transporte local e información práctica.</p>
+              <p><strong>Oportunidad:</strong> Promover planes de un día y fin de semana con tiempos, parqueo, restaurantes y puntos fotográficos.</p>
+              <p class="message">Una escapada cercana para conocer patrimonio, comer bien y recorrer el Sinú.</p>
+              <details>
+                <summary>Ver señales usadas</summary>
+                <ul><li><strong>Google Trends:</strong> Hoteles en Lorica Córdoba aparece con señal reciente, junto al crecimiento del término Lorica Córdoba.</li><li><strong>Oferta oficial:</strong> Alojamiento (68) y atractivos complementarios (56) permiten estructurar visita corta.</li></ul>
+              </details>
+            </article>
+            
+            <article class="card arq-card">
+              <div class="card-head">
+                <div>
+                  <p class="eyebrow">Arquetipo</p>
+                  <h3>Explorador de naturaleza y cultura anfibia</h3>
+                </div>
+                <span class="badge">Medio actual / alto potencial</span>
+              </div>
+              <div class="tags"><span class="pill">Evidencia Medio</span></div>
+              <p><strong>Motivación:</strong> Conectar patrimonio urbano con ciénaga, río, paisaje, fotografía y cultura local.</p>
+              <p><strong>Origen probable:</strong> Viajeros culturales, docentes, estudiantes, fotógrafos y visitantes interésados en naturaleza suave.</p>
+              <p><strong>Servicios que activa:</strong> Guianza, recorridos de interpretación, fotografía, transporte local, agenda cultural, gastronomía y experiencias de río.</p>
+              <p><strong>Oportunidad:</strong> Convertir la naturaleza anfibia y el relato del Sinú en productos interpretativos claros.</p>
+              <p class="message">Lorica como encuentro entre patrimonio, río, ciénaga y cultura viva.</p>
+              <details>
+                <summary>Ver señales usadas</summary>
+                <ul><li><strong>Google Trends:</strong> La batería incluye Ciénaga Grande de Lorica y Malecón de Lorica como activos de naturaleza/río.</li><li><strong>Oferta oficial:</strong> Experiencias turísticas culturales (49) y saberes/patrimonio vivo (27) abren oportunidad de interpretación.</li></ul>
+              </details>
+            </article>
+            
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Señal de oferta oficial</h2>
+        <p class="note">La oferta se usa para validar que cada arquetipo active servicios reales del municipio.</p>
+        <div class="bar-row"><div class="bar-label">Patrimonio</div><div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div><div class="bar-value">114</div></div>
+<div class="bar-row"><div class="bar-label">Gastronomía</div><div class="bar-track"><div class="bar-fill" style="width:93.9%"></div></div><div class="bar-value">107</div></div>
+<div class="bar-row"><div class="bar-label">Alojamiento</div><div class="bar-track"><div class="bar-fill" style="width:59.6%"></div></div><div class="bar-value">68</div></div>
+<div class="bar-row"><div class="bar-label">Atractivos complementarios</div><div class="bar-track"><div class="bar-fill" style="width:49.1%"></div></div><div class="bar-value">56</div></div>
+<div class="bar-row"><div class="bar-label">Comercio turistico</div><div class="bar-track"><div class="bar-fill" style="width:45.6%"></div></div><div class="bar-value">52</div></div>
+<div class="bar-row"><div class="bar-label">Experiencias turísticas culturales</div><div class="bar-track"><div class="bar-fill" style="width:43.0%"></div></div><div class="bar-value">49</div></div>
+<div class="bar-row"><div class="bar-label">Saberes y patrimonio vivo</div><div class="bar-track"><div class="bar-fill" style="width:23.7%"></div></div><div class="bar-value">27</div></div>
+<div class="bar-row"><div class="bar-label">Cultura</div><div class="bar-track"><div class="bar-fill" style="width:16.7%"></div></div><div class="bar-value">19</div></div>
+      </article>
+      <article class="card">
+        <h2>Sentimiento por tipología</h2>
+        
+            <div class="stack-row">
+              <div class="stack-label">Alojamiento<span>53 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:67.9%">68%</div>
+                <div class="neu" style="width:18.9%">19%</div>
+                <div class="neg" style="width:13.2%">13%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Atractivos complementarios<span>19 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:84.2%">84%</div>
+                <div class="neu" style="width:15.8%">16%</div>
+                <div class="neg" style="width:0.0%">0%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Comercio turistico<span>7 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:100.0%">100%</div>
+                <div class="neu" style="width:0.0%">0%</div>
+                <div class="neg" style="width:0.0%">0%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Gastronomía<span>165 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:83.6%">84%</div>
+                <div class="neu" style="width:10.9%">11%</div>
+                <div class="neg" style="width:5.5%">5%</div>
+              </div>
+            </div>
+            
+            <div class="stack-row">
+              <div class="stack-label">Patrimonio<span>49 reseñas</span></div>
+              <div class="stack">
+                <div class="pos" style="width:85.7%">86%</div>
+                <div class="neu" style="width:4.1%">4%</div>
+                <div class="neg" style="width:10.2%">10%</div>
+              </div>
+            </div>
+            
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Demanda digital: términos con mayor señal</h2>
+        <div class="bar-row"><div class="bar-label">Lorica Córdoba</div><div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div><div class="bar-value">65.4</div></div>
+<div class="bar-row"><div class="bar-label">Santa Cruz de Lorica</div><div class="bar-track"><div class="bar-fill" style="width:2.2%"></div></div><div class="bar-value">1.4</div></div>
+<div class="bar-row"><div class="bar-label">pueblos patrimonio Colombia</div><div class="bar-track"><div class="bar-fill" style="width:2.0%"></div></div><div class="bar-value">1.1</div></div>
+<div class="bar-row"><div class="bar-label">turismo cultural Colombia</div><div class="bar-track"><div class="bar-fill" style="width:2.0%"></div></div><div class="bar-value">0.6</div></div>
+<div class="bar-row"><div class="bar-label">hoteles en Lorica Córdoba</div><div class="bar-track"><div class="bar-fill" style="width:2.0%"></div></div><div class="bar-value">0.5</div></div>
+        <p class="note">Google Trends es un índice relativo. Sirve para comparar señales, no para contar turistas ni búsquedas absolutas.</p>
+      </article>
+      <article class="card">
+        <h2>Temas de reseñas</h2>
+        <p><strong>Temas positivos:</strong></p><div><span class="pill">Servicio · 65</span><span class="pill">Gastronomía · 55</span><span class="pill">Paisaje y ambiente · 30</span><span class="pill">Alojamiento · 21</span><span class="pill">Precio · 19</span><span class="pill">Servicio · 18</span><span class="pill">Paisaje y ambiente · 12</span><span class="pill">Patrimonio y cultura · 11</span></div>
+        <p><strong>Alertas:</strong></p><div><span class="pill">Gastronomía · 4</span><span class="pill">Servicio · 4</span><span class="pill">Alojamiento · 4</span><span class="pill">Limpieza · 3</span><span class="pill">Precio · 2</span><span class="pill">Servicio · 1</span><span class="pill">Accesibilidad · 1</span><span class="pill">Paisaje y ambiente · 1</span></div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <h2>Consultas relacionadas que ayudan a perfilar intención</h2>
+      <p class="note"><strong>Lectura:</strong> Estas consultas se usan como señal de intención práctica o motivacional para alimentar los arquetipos del municipio.</p>
+      <div class="queries">
+        <div>
+          <p class="eyebrow">Top consultas</p>
+          <ul class="query-list"><li class="empty-row"><span>Sin consultas disponibles para este corte.</span><strong></strong></li></ul>
+        </div>
+        <div>
+          <p class="eyebrow">Consultas en crecimiento</p>
+          <ul class="query-list"><li class="empty-row"><span>Sin consultas disponibles para este corte.</span><strong></strong></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Potencial internacional exploratorio</h2>
+        <p class="note">Se incluyen mercados exteriores con cualquier señal disponible, incluso si aparecen en un solo término. Es indicio exploratorio, no flujo de visitantes.</p>
+        <table>
+          <thead><tr><th>País</th><th class="num">Términos con señal</th><th>Términos donde apareció</th></tr></thead>
+          <tbody><tr><td>El Salvador</td><td class='num'>1</td><td>Lorica Colombia tourism</td></tr><tr><td>Níger</td><td class='num'>1</td><td>things to do in Lorica Colombia</td></tr><tr><td>República del Congo</td><td class='num'>1</td><td>Ciénaga Grande de Lorica</td></tr><tr><td>Tonga</td><td class='num'>1</td><td>hotels in Lorica Córdoba Colombia</td></tr><tr><td>Wallis y Futuna</td><td class='num'>1</td><td>Lorica tourism</td></tr><tr><td>Moldavia</td><td class='num'>1</td><td>Ciénaga Grande de Lorica</td></tr></tbody>
+        </table>
+      </article>
+      <article class="card">
+        <h2>Uso recomendado</h2>
+        <p>Estos perfiles sirven para priorizar comunicación, paquetes, rutas y contenidos digitales por municipio.</p>
+        <p class="note">No representan tamaños de mercado. Para medir participación real de cada segmento se requeriría encuesta, conteos de visitantes o datos transaccionales.</p>
+      </article>
+    </section>
+
+    <footer>Producto 4 · Santa Cruz de Lorica, Córdoba · Generado el 2026-07-17.</footer>
+  </main>
+</body>
+</html>

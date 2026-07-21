@@ -1,26 +1,27 @@
-# Tablero integral - Piloto Buga
+# Tablero global - Pueblos Patrimoniales
 
-Este repositorio publica los tableros web estáticos del piloto de Guadalajara de Buga.
+Este repositorio publica el tablero global del proyecto con cuatro productos: oferta turística, reseñas, interés web y arquetipos de turistas.
 
 ## Rutas principales
 
-- Tablero integral: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/`
+- Tablero global: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/`
 - Oferta turística: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/oferta/`
 - Análisis de reseñas: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/resenas/`
 - Interés potencial por búsquedas web: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/interes-web/`
 - Arquetipos de turistas: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/arquetipos/`
 
+## Municipios publicados
+
+- Buga, Valle del Cauca.
+- Honda, Tolima.
+- Barichara, Santander.
+- Santa Cruz de Lorica, Córdoba.
+
 ## Contenido
 
-- `arquetipos/`: tablero ejecutivo de arquetipos de turistas potenciales.
-
-- `index.html`: tablero integral con pestañas.
-- `oferta/`: mapa e inventario oficial.
-- `resenas/`: tablero de reseñas.
-- `interes-web/`: tablero de Google Trends.
-- `arquetipos/`: tablero ejecutivo de perfiles de turistas.
+- `index.html`: tablero global con selector por producto y municipio.
+- `oferta/`: mapa consolidado de oferta turística.
+- `resenas/`: tableros de análisis de reseñas por municipio.
+- `interes-web/`: tableros de Google Trends e interés web por municipio.
+- `arquetipos/`: tableros de arquetipos de turistas por municipio.
 - `.nojekyll`: configuración para GitHub Pages.
-
-## Actualización internacional
-
-El tablero de interés web incorpora una capa exploratoria de interés internacional potencial basada en países desde donde aparecen búsquedas relacionadas con Buga en Google Trends. Esta lectura no equivale a nacionalidad ni a visitantes reales.

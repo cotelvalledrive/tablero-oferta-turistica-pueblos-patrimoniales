@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tablero de analisis de resenas - Honda</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f8f9;
+      --panel: #ffffff;
+      --ink: #14213d;
+      --muted: #5c6b73;
+      --line: #d9e2e7;
+      --accent: #2a7f73;
+      --accent2: #415a77;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    header {
+      padding: 28px 32px 18px;
+      background: linear-gradient(135deg, #2a7f73, #1b263b);
+      color: white;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+    header p {
+      margin: 8px 0 0;
+      max-width: 980px;
+      color: #e9f2f2;
+      line-height: 1.5;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .actions a {
+      display: inline-flex;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.35);
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+      background: rgba(255,255,255,0.10);
+    }
+    main { padding: 22px 32px 40px; }
+    .grid { display: grid; gap: 16px; }
+    .cards { grid-template-columns: repeat(6, minmax(140px, 1fr)); }
+    .card, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 8px 18px rgba(20, 33, 61, 0.05);
+    }
+    .card { padding: 16px; }
+    .card .value { font-size: 26px; font-weight: 850; letter-spacing: 0; }
+    .card .label { color: var(--muted); font-size: 12px; margin-top: 4px; line-height: 1.35; }
+    .panel { padding: 18px; min-width: 0; }
+    .panel h2 { margin: 0 0 12px; font-size: 18px; letter-spacing: 0; }
+    .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: 16px; }
+    .wide { margin-top: 16px; }
+    .three { grid-template-columns: 1.1fr 1fr 1fr; margin-top: 16px; }
+    canvas { width: 100% !important; max-height: 360px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #334155; font-size: 12px; background: #f7fafc; }
+    td.num, th.num { text-align: right; }
+    .pill {
+      display: inline-flex;
+      padding: 4px 8px;
+      border-radius: 7px;
+      background: #eef7f5;
+      color: #17665d;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .cloud { display: flex; flex-wrap: wrap; gap: 11px 15px; align-items: center; line-height: 1.05; }
+    .cloud span { color: #24515f; font-weight: 800; }
+    .cloud.negative span { color: #9f1239; }
+    .muted { color: var(--muted); font-size: 12px; line-height: 1.45; }
+    @media (max-width: 1180px) {
+      .cards { grid-template-columns: repeat(3, 1fr); }
+      .two, .three { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      header, main { padding-left: 18px; padding-right: 18px; }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tablero de analisis de resenas - Honda</h1>
+    <p>Resumen del analisis de resenas de Google Maps para la muestra priorizada de oferta turistica oficial. El tablero muestra indicadores agregados; no publica autores ni textos individuales de resenas.</p>
+    <div class="actions">
+      <a href="../">Volver al indice</a>
+      <a href="#temas">Ver temas de resenas</a>
+    </div>
+  </header>
+  <main>
+    <section class="grid cards" id="cards"></section>
+    <section class="grid two">
+      <article class="panel"><h2>Distribucion de sentimiento</h2><canvas id="sentimentChart"></canvas></article>
+      <article class="panel"><h2>Distribucion FODA</h2><canvas id="fodaChart"></canvas></article>
+    </section>
+    <section class="grid two">
+      <article class="panel"><h2>Sentimiento por tipologia oficial</h2><canvas id="sentimentTypologyChart"></canvas></article>
+      <article class="panel"><h2>FODA por tipologia oficial</h2><canvas id="fodaTypologyChart"></canvas></article>
+    </section>
+    <section class="grid three" id="temas">
+      <article class="panel"><h2>Temas mas mencionados</h2><canvas id="topicsChart"></canvas></article>
+      <article class="panel"><h2>Temas positivos</h2><canvas id="positiveTopicsChart"></canvas></article>
+      <article class="panel"><h2>Temas negativos / alertas</h2><canvas id="negativeTopicsChart"></canvas></article>
+    </section>
+    <section class="panel wide"><h2>Resumen por tipologia</h2><div id="typologyTable"></div></section>
+    <section class="panel wide"><h2>Nube de palabras del corpus analizado</h2><div class="cloud" id="wordCloud"></div></section>
+    <section class="panel wide">
+      <h2>Nube de palabras de resenas negativas</h2>
+      <p class="muted">Esta nube se construye solo con resenas clasificadas como negativas; ayuda a identificar alertas narrativas y terminos asociados a debilidades o amenazas.</p>
+      <div class="cloud negative" id="negativeWordCloud"></div>
+    </section>
+  </main>
+  <script>
+    const DATA = {"municipio":"Honda","departamento":"Tolima","slug":"honda_tolima","metrics":{"textReviews":409,"places":58,"samplePlaces":58,"uniqueReviews":539,"positivePct":70.2,"negativePct":17.6,"neutralPct":12.2,"strengthPct":70.2,"apiRequests":116},"sentiment":{"labels":["Positiva","Neutral","Negativa"],"values":[287,50,72]},"foda":{"labels":["Fortaleza","Oportunidad","Debilidad","Amenaza"],"values":[287,50,70,2]},"sentimentByTypology":[{"categoria":"Gastronomia","total":158,"Positiva":105,"Positiva_pct":66.5,"Neutral":23,"Neutral_pct":14.6,"Negativa":30,"Negativa_pct":19.0},{"categoria":"Alojamiento","total":147,"Positiva":88,"Positiva_pct":59.9,"Neutral":20,"Neutral_pct":13.6,"Negativa":39,"Negativa_pct":26.5},{"categoria":"Patrimonio","total":55,"Positiva":50,"Positiva_pct":90.9,"Neutral":3,"Neutral_pct":5.5,"Negativa":2,"Negativa_pct":3.6},{"categoria":"Atractivos complementarios","total":19,"Positiva":16,"Positiva_pct":84.2,"Neutral":2,"Neutral_pct":10.5,"Negativa":1,"Negativa_pct":5.3},{"categoria":"Cultura","total":15,"Positiva":14,"Positiva_pct":93.3,"Neutral":1,"Neutral_pct":6.7,"Negativa":0,"Negativa_pct":0.0},{"categoria":"Comercio turistico","total":8,"Positiva":7,"Positiva_pct":87.5,"Neutral":1,"Neutral_pct":12.5,"Negativa":0,"Negativa_pct":0.0},{"categoria":"Servicios turisticos","total":7,"Positiva":7,"Positiva_pct":100.0,"Neutral":0,"Neutral_pct":0.0,"Negativa":0,"Negativa_pct":0.0}],"fodaByTypology":[{"categoria":"Gastronomia","total":158,"Fortaleza":105,"Fortaleza_pct":66.5,"Oportunidad":23,"Oportunidad_pct":14.6,"Debilidad":29,"Debilidad_pct":18.4,"Amenaza":1,"Amenaza_pct":0.6},{"categoria":"Alojamiento","total":147,"Fortaleza":88,"Fortaleza_pct":59.9,"Oportunidad":20,"Oportunidad_pct":13.6,"Debilidad":38,"Debilidad_pct":25.9,"Amenaza":1,"Amenaza_pct":0.7},{"categoria":"Patrimonio","total":55,"Fortaleza":50,"Fortaleza_pct":90.9,"Oportunidad":3,"Oportunidad_pct":5.5,"Debilidad":2,"Debilidad_pct":3.6,"Amenaza":0,"Amenaza_pct":0.0},{"categoria":"Atractivos complementarios","total":19,"Fortaleza":16,"Fortaleza_pct":84.2,"Oportunidad":2,"Oportunidad_pct":10.5,"Debilidad":1,"Debilidad_pct":5.3,"Amenaza":0,"Amenaza_pct":0.0},{"categoria":"Cultura","total":15,"Fortaleza":14,"Fortaleza_pct":93.3,"Oportunidad":1,"Oportunidad_pct":6.7,"Debilidad":0,"Debilidad_pct":0.0,"Amenaza":0,"Amenaza_pct":0.0},{"categoria":"Comercio turistico","total":8,"Fortaleza":7,"Fortaleza_pct":87.5,"Oportunidad":1,"Oportunidad_pct":12.5,"Debilidad":0,"Debilidad_pct":0.0,"Amenaza":0,"Amenaza_pct":0.0},{"categoria":"Servicios turisticos","total":7,"Fortaleza":7,"Fortaleza_pct":100.0,"Oportunidad":0,"Oportunidad_pct":0.0,"Debilidad":0,"Debilidad_pct":0.0,"Amenaza":0,"Amenaza_pct":0.0}],"topTopics":[{"tema":"Servicio","menciones":200},{"tema":"Gastronomia","menciones":176},{"tema":"Paisaje y ambiente","menciones":101},{"tema":"Alojamiento","menciones":101},{"tema":"Precio","menciones":86},{"tema":"Limpieza","menciones":58},{"tema":"Accesibilidad","menciones":51},{"tema":"Patrimonio y cultura","menciones":47},{"tema":"Seguridad","menciones":20}],"positiveTopics":[{"tema":"Servicio","menciones":137},{"tema":"Gastronomia","menciones":118},{"tema":"Paisaje y ambiente","menciones":90},{"tema":"Alojamiento","menciones":58},{"tema":"Patrimonio y cultura","menciones":43},{"tema":"Precio","menciones":39},{"tema":"Accesibilidad","menciones":37},{"tema":"Limpieza","menciones":27},{"tema":"Seguridad","menciones":16}],"negativeTopics":[{"tema":"Servicio","menciones":38},{"tema":"Gastronomia","menciones":33},{"tema":"Precio","menciones":27},{"tema":"Alojamiento","menciones":25},{"tema":"Limpieza","menciones":19},{"tema":"Accesibilidad","menciones":6},{"tema":"Paisaje y ambiente","menciones":3},{"tema":"Patrimonio y cultura","menciones":2},{"tema":"Seguridad","menciones":2}],"typologyTable":[{"tipologia":"Gastronomia","total":158,"positivas_pct":66.5,"negativas_pct":19.0,"tema_principal":"Gastronomia","foda_principal":"Fortaleza"},{"tipologia":"Alojamiento","total":147,"positivas_pct":59.9,"negativas_pct":26.5,"tema_principal":"Alojamiento","foda_principal":"Fortaleza"},{"tipologia":"Patrimonio","total":55,"positivas_pct":90.9,"negativas_pct":3.6,"tema_principal":"Patrimonio y cultura","foda_principal":"Fortaleza"},{"tipologia":"Atractivos complementarios","total":19,"positivas_pct":84.2,"negativas_pct":5.3,"tema_principal":"Paisaje y ambiente","foda_principal":"Fortaleza"},{"tipologia":"Cultura","total":15,"positivas_pct":93.3,"negativas_pct":0.0,"tema_principal":"Patrimonio y cultura","foda_principal":"Fortaleza"},{"tipologia":"Comercio turistico","total":8,"positivas_pct":87.5,"negativas_pct":0.0,"tema_principal":"Paisaje y ambiente","foda_principal":"Fortaleza"},{"tipologia":"Servicios turisticos","total":7,"positivas_pct":100.0,"negativas_pct":0.0,"tema_principal":"Servicio","foda_principal":"Fortaleza"}],"wordCloud":[{"palabra":"lugar","frecuencia":132,"size":47},{"palabra":"comida","frecuencia":123,"size":44},{"palabra":"hotel","frecuencia":110,"size":41},{"palabra":"atencion","frecuencia":109,"size":41},{"palabra":"servicio","frecuencia":91,"size":36},{"palabra":"excelente","frecuencia":81,"size":33},{"palabra":"buena","frecuencia":81,"size":33},{"palabra":"honda","frecuencia":69,"size":30},{"palabra":"buen","frecuencia":63,"size":29},{"palabra":"piscina","frecuencia":53,"size":26},{"palabra":"bien","frecuencia":48,"size":25},{"palabra":"habitaciones","frecuencia":44,"size":24},{"palabra":"recomiendo","frecuencia":41,"size":23},{"palabra":"rio","frecuencia":40,"size":23},{"palabra":"habitacion","frecuencia":37,"size":22},{"palabra":"super","frecuencia":36,"size":22},{"palabra":"tiene","frecuencia":36,"size":22},{"palabra":"ambiente","frecuencia":35,"size":22},{"palabra":"precio","frecuencia":34,"size":21},{"palabra":"recomendado","frecuencia":34,"size":21},{"palabra":"bonito","frecuencia":33,"size":21},{"palabra":"mucho","frecuencia":33,"size":21},{"palabra":"personal","frecuencia":33,"size":21},{"palabra":"deliciosa","frecuencia":33,"size":21},{"palabra":"bueno","frecuencia":32,"size":21},{"palabra":"calidad","frecuencia":32,"size":21},{"palabra":"precios","frecuencia":32,"size":21},{"palabra":"mejor","frecuencia":31,"size":20},{"palabra":"agradable","frecuencia":31,"size":20},{"palabra":"restaurante","frecuencia":31,"size":20},{"palabra":"platos","frecuencia":30,"size":20},{"palabra":"experiencia","frecuencia":28,"size":20},{"palabra":"poco","frecuencia":28,"size":20},{"palabra":"estaba","frecuencia":27,"size":19},{"palabra":"sitio","frecuencia":27,"size":19},{"palabra":"vista","frecuencia":26,"size":19},{"palabra":"ubicacion","frecuencia":26,"size":19},{"palabra":"sabor","frecuencia":26,"size":19},{"palabra":"desayuno","frecuencia":24,"size":19},{"palabra":"falta","frecuencia":23,"size":18},{"palabra":"tienen","frecuencia":23,"size":18},{"palabra":"bastante","frecuencia":23,"size":18},{"palabra":"rica","frecuencia":23,"size":18},{"palabra":"comer","frecuencia":23,"size":18},{"palabra":"uno","frecuencia":21,"size":18},{"palabra":"noche","frecuencia":21,"size":18},{"palabra":"amable","frecuencia":21,"size":18},{"palabra":"habia","frecuencia":21,"size":18},{"palabra":"personas","frecuencia":21,"size":18},{"palabra":"aire","frecuencia":20,"size":18},{"palabra":"centro","frecuencia":20,"size":18},{"palabra":"mala","frecuencia":19,"size":17},{"palabra":"dia","frecuencia":19,"size":17},{"palabra":"pesimo","frecuencia":19,"size":17},{"palabra":"nada","frecuencia":19,"size":17},{"palabra":"mal","frecuencia":19,"size":17},{"palabra":"familia","frecuencia":19,"size":17},{"palabra":"vale","frecuencia":19,"size":17},{"palabra":"dos","frecuencia":19,"size":17},{"palabra":"pescado","frecuencia":19,"size":17},{"palabra":"cuenta","frecuencia":18,"size":17},{"palabra":"instalaciones","frecuencia":18,"size":17},{"palabra":"the","frecuencia":18,"size":17},{"palabra":"tenia","frecuencia":17,"size":17},{"palabra":"espacio","frecuencia":17,"size":17},{"palabra":"parqueadero","frecuencia":17,"size":17},{"palabra":"ruido","frecuencia":17,"size":17},{"palabra":"cerca","frecuencia":17,"size":17},{"palabra":"otro","frecuencia":17,"size":17},{"palabra":"tranquilo","frecuencia":17,"size":17},{"palabra":"agua","frecuencia":16,"size":17},{"palabra":"tan","frecuencia":16,"size":17},{"palabra":"realmente","frecuencia":16,"size":17},{"palabra":"disfrutar","frecuencia":16,"size":17},{"palabra":"magdalena","frecuencia":16,"size":17},{"palabra":"mil","frecuencia":15,"size":16},{"palabra":"hermoso","frecuencia":15,"size":16},{"palabra":"general","frecuencia":15,"size":16},{"palabra":"acondicionado","frecuencia":15,"size":16},{"palabra":"asi","frecuencia":15,"size":16},{"palabra":"bano","frecuencia":15,"size":16},{"palabra":"algo","frecuencia":15,"size":16},{"palabra":"ademas","frecuencia":15,"size":16},{"palabra":"buenos","frecuencia":15,"size":16},{"palabra":"casa","frecuencia":15,"size":16},{"palabra":"demasiado","frecuencia":14,"size":16},{"palabra":"mejorar","frecuencia":14,"size":16},{"palabra":"recepcion","frecuencia":14,"size":16},{"palabra":"pasar","frecuencia":14,"size":16},{"palabra":"puede","frecuencia":14,"size":16}],"negativeWordCloud":[{"palabra":"hotel","frecuencia":33,"size":47},{"palabra":"servicio","frecuencia":27,"size":40},{"palabra":"comida","frecuencia":22,"size":35},{"palabra":"atencion","frecuencia":19,"size":32},{"palabra":"mala","frecuencia":18,"size":31},{"palabra":"pesimo","frecuencia":17,"size":30},{"palabra":"mal","frecuencia":15,"size":28},{"palabra":"habia","frecuencia":13,"size":26},{"palabra":"habitacion","frecuencia":12,"size":25},{"palabra":"tenia","frecuencia":10,"size":23},{"palabra":"lugar","frecuencia":10,"size":23},{"palabra":"buena","frecuencia":10,"size":23},{"palabra":"restaurante","frecuencia":10,"size":23},{"palabra":"piscina","frecuencia":9,"size":22},{"palabra":"recomiendo","frecuencia":9,"size":22},{"palabra":"nada","frecuencia":9,"size":22},{"palabra":"noche","frecuencia":9,"size":22},{"palabra":"desayuno","frecuencia":9,"size":22},{"palabra":"habitaciones","frecuencia":9,"size":22},{"palabra":"reserva","frecuencia":9,"size":22},{"palabra":"precio","frecuencia":9,"size":22},{"palabra":"otro","frecuencia":9,"size":22},{"palabra":"caro","frecuencia":8,"size":21},{"palabra":"ruido","frecuencia":8,"size":21},{"palabra":"mucho","frecuencia":8,"size":21},{"palabra":"malo","frecuencia":8,"size":21},{"palabra":"regular","frecuencia":8,"size":21},{"palabra":"bano","frecuencia":8,"size":21},{"palabra":"verdad","frecuencia":8,"size":21},{"palabra":"peor","frecuencia":7,"size":20},{"palabra":"experiencia","frecuencia":7,"size":20},{"palabra":"tan","frecuencia":7,"size":20},{"palabra":"persona","frecuencia":7,"size":20},{"palabra":"poco","frecuencia":7,"size":20},{"palabra":"calidad","frecuencia":7,"size":20},{"palabra":"era","frecuencia":7,"size":20},{"palabra":"estaba","frecuencia":7,"size":20},{"palabra":"pesima","frecuencia":7,"size":20},{"palabra":"falta","frecuencia":7,"size":20},{"palabra":"almuerzo","frecuencia":6,"size":19},{"palabra":"demasiado","frecuencia":6,"size":19},{"palabra":"sucio","frecuencia":6,"size":19},{"palabra":"mismo","frecuencia":6,"size":19},{"palabra":"pedi","frecuencia":6,"size":19},{"palabra":"costoso","frecuencia":6,"size":19},{"palabra":"limpieza","frecuencia":5,"size":18},{"palabra":"huespedes","frecuencia":5,"size":18},{"palabra":"hace","frecuencia":5,"size":18},{"palabra":"bonito","frecuencia":5,"size":18},{"palabra":"bien","frecuencia":5,"size":18},{"palabra":"recepcion","frecuencia":5,"size":18},{"palabra":"puede","frecuencia":5,"size":18},{"palabra":"terrible","frecuencia":5,"size":18},{"palabra":"bueno","frecuencia":5,"size":18},{"palabra":"toallas","frecuencia":5,"size":18},{"palabra":"antes","frecuencia":5,"size":18},{"palabra":"precios","frecuencia":5,"size":18},{"palabra":"tienen","frecuencia":5,"size":18},{"palabra":"toco","frecuencia":5,"size":18},{"palabra":"parece","frecuencia":5,"size":18},{"palabra":"dos","frecuencia":5,"size":18},{"palabra":"dia","frecuencia":5,"size":18},{"palabra":"horrible","frecuencia":5,"size":18},{"palabra":"ademas","frecuencia":5,"size":18},{"palabra":"sabor","frecuencia":5,"size":18},{"palabra":"saben","frecuencia":5,"size":18},{"palabra":"demorado","frecuencia":4,"size":17},{"palabra":"mejor","frecuencia":4,"size":17},{"palabra":"resto","frecuencia":4,"size":17},{"palabra":"pesos","frecuencia":4,"size":17}],"colors":{"sentiment":{"Positiva":"#3F8F73","Neutral":"#C49A39","Negativa":"#C95C52"},"foda":{"Fortaleza":"#4A6FA5","Oportunidad":"#3CA69A","Debilidad":"#C78243","Amenaza":"#A63D40"}}};
+    const sentimentColors = DATA.colors.sentiment;
+    const fodaColors = DATA.colors.foda;
+    function pct(value, total) {
+      if (!total) return "0.0%";
+      return (value / total * 100).toFixed(1) + "%";
+    }
+    function makeCards() {
+      const cards = [
+        [DATA.metrics.textReviews, "resenas analizadas"],
+        [DATA.metrics.places + " / " + DATA.metrics.samplePlaces, "lugares con texto / muestra"],
+        [DATA.metrics.positivePct + "%", "resenas positivas"],
+        [DATA.metrics.negativePct + "%", "resenas negativas"],
+        [DATA.metrics.neutralPct + "%", "resenas neutrales"],
+        [DATA.metrics.strengthPct + "%", "fortalezas"]
+      ];
+      document.getElementById("cards").innerHTML = cards.map(([value, label]) => `
+        <article class="card"><div class="value">${value}</div><div class="label">${label}</div></article>
+      `).join("");
+    }
+    function doughnutChart(id, labels, values, colors) {
+      new Chart(document.getElementById(id), {
+        type: "doughnut",
+        data: { labels, datasets: [{ data: values, backgroundColor: colors, borderColor: "#ffffff", borderWidth: 2 }] },
+        options: { plugins: { legend: { position: "bottom" }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} (${pct(ctx.raw, values.reduce((a,b)=>a+b,0))})` } } } }
+      });
+    }
+    function stackedPercentBar(id, records, labels, colors) {
+      new Chart(document.getElementById(id), {
+        type: "bar",
+        data: {
+          labels: records.map(r => r.categoria),
+          datasets: labels.map(label => ({ label, data: records.map(r => r[label + "_pct"] || 0), backgroundColor: colors[label] || "#94a3b8" }))
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          scales: { x: { stacked: true, min: 0, max: 100, ticks: { callback: value => value + "%" } }, y: { stacked: true } },
+          plugins: { legend: { position: "bottom" }, tooltip: { callbacks: { footer: items => "Total resenas: " + records[items[0].dataIndex].total, label: ctx => `${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%` } } }
+        }
+      });
+    }
+    function barChart(id, records, labelKey, valueKey, color) {
+      new Chart(document.getElementById(id), {
+        type: "bar",
+        data: { labels: records.map(r => r[labelKey]), datasets: [{ label: "Menciones", data: records.map(r => r[valueKey]), backgroundColor: color }] },
+        options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+      });
+    }
+    function makeTable() {
+      const rows = DATA.typologyTable.map(row => `
+        <tr>
+          <td><span class="pill">${row.tipologia}</span></td>
+          <td class="num">${row.total}</td>
+          <td class="num">${row.positivas_pct}%</td>
+          <td class="num">${row.negativas_pct}%</td>
+          <td>${row.tema_principal || "Sin tema dominante"}</td>
+          <td>${row.foda_principal || "Sin clasificacion"}</td>
+        </tr>
+      `).join("");
+      document.getElementById("typologyTable").innerHTML = `
+        <table>
+          <thead><tr><th>Tipologia oficial</th><th class="num">Resenas</th><th class="num">% positivas</th><th class="num">% negativas</th><th>Tema principal</th><th>Lectura FODA dominante</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+    function makeCloud() {
+      document.getElementById("wordCloud").innerHTML = DATA.wordCloud.map(item => `<span title="${item.frecuencia} menciones" style="font-size:${item.size}px">${item.palabra}</span>`).join("");
+      document.getElementById("negativeWordCloud").innerHTML = DATA.negativeWordCloud.length
+        ? DATA.negativeWordCloud.map(item => `<span title="${item.frecuencia} menciones" style="font-size:${item.size}px">${item.palabra}</span>`).join("")
+        : '<span style="font-size:16px">No hay suficientes palabras negativas para visualizar.</span>';
+    }
+    makeCards();
+    doughnutChart("sentimentChart", DATA.sentiment.labels, DATA.sentiment.values, DATA.sentiment.labels.map(label => sentimentColors[label]));
+    doughnutChart("fodaChart", DATA.foda.labels, DATA.foda.values, DATA.foda.labels.map(label => fodaColors[label]));
+    stackedPercentBar("sentimentTypologyChart", DATA.sentimentByTypology, DATA.sentiment.labels, sentimentColors);
+    stackedPercentBar("fodaTypologyChart", DATA.fodaByTypology, DATA.foda.labels, fodaColors);
+    barChart("topicsChart", DATA.topTopics, "tema", "menciones", "#4A6FA5");
+    barChart("positiveTopicsChart", DATA.positiveTopics, "tema", "menciones", "#3F8F73");
+    barChart("negativeTopicsChart", DATA.negativeTopics, "tema", "menciones", "#A63D40");
+    makeTable();
+    makeCloud();
+  </script>
+</body>
+</html>
