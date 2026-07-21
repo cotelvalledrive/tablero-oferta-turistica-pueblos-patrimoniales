@@ -5,6 +5,8 @@ Este repositorio publica el tablero global del proyecto con cuatro productos: of
 ## Rutas principales
 
 - Tablero global: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/`
+- Informe de resultados: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/informe-resultados/`
+- Word de resultados: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/documentos/informe_resultados_4_pueblos_patrimoniales.docx`
 - Oferta turística: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/oferta/`
 - Análisis de reseñas: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/resenas/`
 - Interés potencial por búsquedas web: `https://cotelvalledrive.github.io/tablero-oferta-turistica-pueblos-patrimoniales/interes-web/`
@@ -20,6 +22,8 @@ Este repositorio publica el tablero global del proyecto con cuatro productos: of
 ## Contenido
 
 - `index.html`: tablero global con selector por producto y municipio.
+- `informe-resultados/`: informe ejecutivo actualizable de resultados por producto y municipio.
+- `documentos/`: documentos Word descargables para socializacion.
 - `oferta/`: mapa consolidado de oferta turística.
 - `resenas/`: tableros de análisis de reseñas por municipio.
 - `interes-web/`: tableros de Google Trends e interés web por municipio.

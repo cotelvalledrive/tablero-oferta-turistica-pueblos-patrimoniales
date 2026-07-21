@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Informe de resultados - Pueblos Patrimoniales</title>
+  <style>
+    :root {
+      --ink:#16202a;
+      --muted:#5e6d78;
+      --line:#dce4e8;
+      --panel:#ffffff;
+      --page:#f4f7f8;
+      --brand:#174c4f;
+      --brand2:#2c7a6f;
+      --accent:#b65f28;
+      --soft:#edf5f3;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:var(--page); }
+    header { background:#17324d; color:#fff; padding:30px 34px 24px; }
+    header h1 { margin:0; font-size:31px; line-height:1.12; letter-spacing:0; }
+    header p { margin:10px 0 0; max-width:1080px; color:#e7f0f2; line-height:1.45; }
+    .top-nav { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+    .top-nav a { color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.34); border-radius:8px; padding:9px 11px; font-weight:750; font-size:13px; }
+    main { padding:22px 34px 38px; max-width:1440px; margin:0 auto; }
+    .kpis { display:grid; grid-template-columns:repeat(5,minmax(150px,1fr)); gap:12px; margin-bottom:18px; }
+    .kpi, .municipality-card, .section, .archetype { background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+    .kpi { padding:15px; }
+    .kpi strong { display:block; font-size:26px; line-height:1; }
+    .kpi span { display:block; margin-top:7px; color:var(--muted); font-size:12px; }
+    .section { padding:20px; margin-top:16px; }
+    .section h2 { margin:0 0 8px; font-size:22px; letter-spacing:0; }
+    .section > p { margin:0 0 16px; color:var(--muted); line-height:1.45; max-width:1050px; }
+    .municipality-grid { display:grid; grid-template-columns:repeat(4,minmax(245px,1fr)); gap:13px; }
+    .municipality-card { padding:16px; display:flex; flex-direction:column; gap:12px; }
+    .card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .card-head h3 { margin:0; font-size:20px; }
+    .card-head p { margin:3px 0 0; color:var(--muted); }
+    .card-head span { background:var(--soft); color:var(--brand); padding:7px 9px; border-radius:8px; font-weight:800; white-space:nowrap; font-size:13px; }
+    dl { margin:0; display:grid; gap:8px; }
+    dl div { display:grid; grid-template-columns:1.05fr .95fr; gap:8px; align-items:start; }
+    dt { color:var(--muted); font-size:12px; }
+    dd { margin:0; font-weight:750; text-align:right; }
+    .mini-links { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:auto; }
+    .mini-links a, .primary-link { text-align:center; text-decoration:none; color:#fff; background:var(--brand2); border-radius:8px; padding:9px 10px; font-weight:800; font-size:13px; }
+    .primary-link { display:inline-flex; margin-top:4px; }
+    .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:8px; background:#fff; }
+    table { border-collapse:collapse; width:100%; min-width:920px; }
+    th, td { padding:12px 13px; border-bottom:1px solid var(--line); vertical-align:top; text-align:left; }
+    th { background:#f7fafb; font-size:13px; }
+    tbody th { background:#fff; font-size:14px; }
+    tr:last-child th, tr:last-child td { border-bottom:none; }
+    .pill { display:inline-flex; align-items:center; gap:7px; margin:0 6px 6px 0; padding:6px 8px; border-radius:8px; background:#f2f6f5; border:1px solid #dce9e6; font-size:12px; }
+    .pill b { color:var(--accent); }
+    .muted { color:var(--muted); }
+    .archetype-group { margin-top:16px; }
+    .archetype-group h3 { margin:0 0 10px; font-size:18px; }
+    .archetype-grid { display:grid; grid-template-columns:repeat(2,minmax(260px,1fr)); gap:12px; }
+    .archetype { padding:14px; }
+    .archetype h4 { margin:0 0 7px; font-size:16px; }
+    .archetype p { margin:0 0 7px; color:var(--muted); line-height:1.45; }
+    footer { padding:0 34px 26px; color:var(--muted); max-width:1440px; margin:0 auto; font-size:12px; }
+    @media (max-width:1100px) { .kpis { grid-template-columns:repeat(3,1fr); } .municipality-grid { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:760px) {
+      header, main, footer { padding-left:18px; padding-right:18px; }
+      header h1 { font-size:25px; }
+      .kpis, .municipality-grid, .archetype-grid { grid-template-columns:1fr; }
+      dl div { grid-template-columns:1fr; }
+      dd { text-align:left; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Informe de resultados - primeros 4 pueblos patrimoniales</h1>
+    <p>Resumen ejecutivo actualizable de los cuatro productos del proyecto: oferta turistica, analisis de rese&ntilde;as, interes potencial por busquedas web y arquetipos de turistas. Esta pagina se regenera con los datos disponibles para GitHub Pages.</p>
+    <nav class="top-nav" aria-label="Rutas principales">
+      <a href="../">Tablero global</a>
+      <a href="../oferta/">Oferta</a>
+      <a href="../resenas/">Rese&ntilde;as</a>
+      <a href="../interes-web/">Inter&eacute;s web</a>
+      <a href="../arquetipos/">Arquetipos</a>
+      <a href="../documentos/informe_resultados_4_pueblos_patrimoniales.docx">Descargar Word</a>
+    </nav>
+  </header>
+  <main>
+    <section class="kpis" aria-label="Indicadores globales">
+      <article class="kpi"><strong>4</strong><span>municipios publicados</span></article>
+      <article class="kpi"><strong>1.252</strong><span>lugares en oferta turistica</span></article>
+      <article class="kpi"><strong>2.287</strong><span>rese&ntilde;as unicas extraidas</span></article>
+      <article class="kpi"><strong>1.736</strong><span>rese&ntilde;as analizadas</span></article>
+      <article class="kpi"><strong>17</strong><span>arquetipos construidos</span></article>
+    </section>
+
+    <section class="section" id="municipios">
+      <h2>Lectura por municipio</h2>
+      <p>Cada tarjeta combina la escala de la oferta, el volumen de rese&ntilde;as procesadas, la principal se&ntilde;al de busqueda y el avance de arquetipos. Los enlaces abren el tablero especifico de cada producto.</p>
+      <div class="municipality-grid"><article class="municipality-card">
+              <div class="card-head">
+                <div>
+                  <h3>Buga</h3>
+                  <p>Valle del Cauca</p>
+                </div>
+                <span>413 lugares</span>
+              </div>
+              <dl>
+                <div><dt>Rese&ntilde;as analizadas</dt><dd>516</dd></div>
+                <div><dt>Sentimiento positivo</dt><dd>80.6%</dd></div>
+                <div><dt>Se&ntilde;al web principal</dt><dd>Buga Valle</dd></div>
+                <div><dt>Arquetipos</dt><dd>5</dd></div>
+              </dl>
+              <nav class="mini-links">
+                <a href="../oferta/index.html?municipio=buga_valle">Oferta</a>
+                <a href="../resenas/buga/index.html">Rese&ntilde;as</a>
+                <a href="../interes-web/buga/index.html">Inter&eacute;s web</a>
+                <a href="../arquetipos/buga/index.html">Arquetipos</a>
+              </nav>
+            </article><article class="municipality-card">
+              <div class="card-head">
+                <div>
+                  <h3>Honda</h3>
+                  <p>Tolima</p>
+                </div>
+                <span>281 lugares</span>
+              </div>
+              <dl>
+                <div><dt>Rese&ntilde;as analizadas</dt><dd>409</dd></div>
+                <div><dt>Sentimiento positivo</dt><dd>70.2%</dd></div>
+                <div><dt>Se&ntilde;al web principal</dt><dd>Honda Tolima</dd></div>
+                <div><dt>Arquetipos</dt><dd>4</dd></div>
+              </dl>
+              <nav class="mini-links">
+                <a href="../oferta/index.html?municipio=honda_tolima">Oferta</a>
+                <a href="../resenas/honda/index.html">Rese&ntilde;as</a>
+                <a href="../interes-web/honda/index.html">Inter&eacute;s web</a>
+                <a href="../arquetipos/honda/index.html">Arquetipos</a>
+              </nav>
+            </article><article class="municipality-card">
+              <div class="card-head">
+                <div>
+                  <h3>Barichara</h3>
+                  <p>Santander</p>
+                </div>
+                <span>329 lugares</span>
+              </div>
+              <dl>
+                <div><dt>Rese&ntilde;as analizadas</dt><dd>518</dd></div>
+                <div><dt>Sentimiento positivo</dt><dd>90.2%</dd></div>
+                <div><dt>Se&ntilde;al web principal</dt><dd>Barichara Santander</dd></div>
+                <div><dt>Arquetipos</dt><dd>4</dd></div>
+              </dl>
+              <nav class="mini-links">
+                <a href="../oferta/index.html?municipio=barichara_santander">Oferta</a>
+                <a href="../resenas/barichara/index.html">Rese&ntilde;as</a>
+                <a href="../interes-web/barichara/index.html">Inter&eacute;s web</a>
+                <a href="../arquetipos/barichara/index.html">Arquetipos</a>
+              </nav>
+            </article><article class="municipality-card">
+              <div class="card-head">
+                <div>
+                  <h3>Santa Cruz de Lorica</h3>
+                  <p>Cordoba</p>
+                </div>
+                <span>229 lugares</span>
+              </div>
+              <dl>
+                <div><dt>Rese&ntilde;as analizadas</dt><dd>293</dd></div>
+                <div><dt>Sentimiento positivo</dt><dd>81.6%</dd></div>
+                <div><dt>Se&ntilde;al web principal</dt><dd>Lorica Cordoba</dd></div>
+                <div><dt>Arquetipos</dt><dd>4</dd></div>
+              </dl>
+              <nav class="mini-links">
+                <a href="../oferta/index.html?municipio=santa_cruz_de_lorica_cordoba">Oferta</a>
+                <a href="../resenas/santa-cruz-de-lorica/index.html">Rese&ntilde;as</a>
+                <a href="../interes-web/santa-cruz-de-lorica/index.html">Inter&eacute;s web</a>
+                <a href="../arquetipos/santa-cruz-de-lorica/index.html">Arquetipos</a>
+              </nav>
+            </article></div>
+    </section>
+
+    <section class="section" id="producto1">
+      <h2>Producto 1 - Oferta turistica</h2>
+      <p>Inventario depurado de oferta turistica y cultural, clasificado por tipologia y publicado en el mapa consolidado.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Municipio</th><th>Lugares</th><th>Tipologias con mayor volumen</th></tr></thead>
+          <tbody><tr>
+              <th>Buga</th>
+              <td>413</td>
+              <td><span class="pill">Gastronomia<b>158</b></span><span class="pill">Alojamiento<b>83</b></span><span class="pill">Patrimonio<b>74</b></span></td>
+            </tr><tr>
+              <th>Honda</th>
+              <td>281</td>
+              <td><span class="pill">Gastronomia<b>97</b></span><span class="pill">Alojamiento<b>87</b></span><span class="pill">Patrimonio<b>50</b></span></td>
+            </tr><tr>
+              <th>Barichara</th>
+              <td>329</td>
+              <td><span class="pill">Alojamiento<b>130</b></span><span class="pill">Gastronomia<b>89</b></span><span class="pill">Patrimonio<b>37</b></span></td>
+            </tr><tr>
+              <th>Santa Cruz de Lorica</th>
+              <td>229</td>
+              <td><span class="pill">Gastronomia<b>99</b></span><span class="pill">Patrimonio<b>68</b></span><span class="pill">Alojamiento<b>38</b></span></td>
+            </tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="producto2">
+      <h2>Producto 2 - Analisis de rese&ntilde;as</h2>
+      <p>Lectura de experiencia percibida a partir de rese&ntilde;as de Google Maps: sentimiento, temas recurrentes y cobertura de lugares con texto util.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Municipio</th><th>Lugares muestra</th><th>Rese&ntilde;as unicas</th><th>Analizadas</th><th>Positivas</th><th>Negativas</th><th>Temas principales</th></tr></thead>
+          <tbody><tr>
+              <th>Buga</th>
+              <td>75</td>
+              <td>697</td>
+              <td>516</td>
+              <td>80.6%</td>
+              <td>10.5%</td>
+              <td><span class="pill">Gastronomia<b>224</b></span><span class="pill">Servicio<b>220</b></span><span class="pill">Paisaje y ambiente<b>110</b></span><span class="pill">Precio<b>72</b></span></td>
+            </tr><tr>
+              <th>Honda</th>
+              <td>58</td>
+              <td>539</td>
+              <td>409</td>
+              <td>70.2%</td>
+              <td>17.6%</td>
+              <td><span class="pill">Servicio<b>200</b></span><span class="pill">Gastronomia<b>176</b></span><span class="pill">Paisaje y ambiente<b>101</b></span><span class="pill">Alojamiento<b>101</b></span></td>
+            </tr><tr>
+              <th>Barichara</th>
+              <td>67</td>
+              <td>618</td>
+              <td>518</td>
+              <td>90.2%</td>
+              <td>6.4%</td>
+              <td><span class="pill">Servicio<b>242</b></span><span class="pill">Gastronomia<b>233</b></span><span class="pill">Paisaje y ambiente<b>160</b></span><span class="pill">Alojamiento<b>130</b></span></td>
+            </tr><tr>
+              <th>Santa Cruz de Lorica</th>
+              <td>48</td>
+              <td>433</td>
+              <td>293</td>
+              <td>81.6%</td>
+              <td>7.2%</td>
+              <td><span class="pill">Servicio<b>108</b></span><span class="pill">Gastronomia<b>80</b></span><span class="pill">Paisaje y ambiente<b>67</b></span><span class="pill">Precio<b>37</b></span></td>
+            </tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="producto3">
+      <h2>Producto 3 - Interes potencial por busquedas web</h2>
+      <p>Senales de demanda digital desde Google Trends, con enfasis en terminos de destino, regiones nacionales y mercados internacionales cuando existe informacion publicada.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Municipio</th><th>Termino lider</th><th>Interes promedio</th><th>Departamentos con mayor interes</th><th>Mercados internacionales sugeridos</th></tr></thead>
+          <tbody><tr>
+              <th>Buga</th>
+              <td>Buga Valle</td>
+              <td>61.5%</td>
+              <td><span class="pill">Valle del Cauca (Basílica de Buga)<b>100</b></span><span class="pill">Caldas (pueblos patrimonio Colombia)<b>100</b></span><span class="pill">Chocó (cómo llegar a Buga)<b>100</b></span></td>
+              <td><span class="muted">Sin datos publicados.</span></td>
+            </tr><tr>
+              <th>Honda</th>
+              <td>Honda Tolima</td>
+              <td>25.0%</td>
+              <td><span class="pill">Tolima (Honda Tolima)<b>100</b></span><span class="pill">Risaralda (Honda turismo)<b>100</b></span><span class="pill">Guaviare (pueblos patrimonio Colombia)<b>100</b></span></td>
+              <td><span class="pill">Dominica<b>100</b></span><span class="pill">Islas Marianas del Norte<b>100</b></span><span class="pill">Perú<b>100</b></span></td>
+            </tr><tr>
+              <th>Barichara</th>
+              <td>Barichara Santander</td>
+              <td>34.3%</td>
+              <td><span class="pill">Santander (Barichara Colombia)<b>100</b></span><span class="pill">Bogotá (turismo cultural Colombia)<b>100</b></span><span class="pill">Guaviare (pueblos patrimonio Colombia)<b>100</b></span></td>
+              <td><span class="pill">Estados Unidos<b>100</b></span><span class="pill">Guernesey<b>100</b></span><span class="pill">Níger<b>100</b></span></td>
+            </tr><tr>
+              <th>Santa Cruz de Lorica</th>
+              <td>Lorica Cordoba</td>
+              <td>40.1%</td>
+              <td><span class="pill">Córdoba (Cienaga Grande de Lorica)<b>100</b></span><span class="pill">Tolima (como llegar a Lorica Cordoba)<b>100</b></span><span class="pill">Antioquia (como llegar a Lorica Cordoba)<b>100</b></span></td>
+              <td><span class="pill">El Salvador<b>100</b></span><span class="pill">Níger<b>100</b></span><span class="pill">República del Congo<b>100</b></span></td>
+            </tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="producto4">
+      <h2>Producto 4 - Arquetipos de turistas</h2>
+      <p>Sintesis interpretativa de perfiles de visitante, conectando oferta, rese&ntilde;as y demanda digital para orientar decisiones de promocion y producto turistico.</p>
+      <section class="archetype-group">
+              <h3>Buga</h3>
+              <div class="archetype-grid"><article class="archetype">
+              <h4>Peregrino religioso regional</h4>
+              <p><strong>Peso:</strong> Muy alto · <strong>Evidencia:</strong> Alto</p>
+              <p>Organizar información de horarios, accesibilidad, rutas peatonales, parqueaderos, baños y oferta gastronómica alrededor del eje religioso.</p>
+            </article><article class="archetype">
+              <h4>Visitante de escapada regional</h4>
+              <p><strong>Peso:</strong> Alto · <strong>Evidencia:</strong> Medio-alto</p>
+              <p>Crear rutas de 1 día, 24 horas y fin de semana con precios orientativos, tiempos de desplazamiento y recomendaciones por tipo de grupo.</p>
+            </article><article class="archetype">
+              <h4>Visitante religioso con consumo complementario</h4>
+              <p><strong>Peso:</strong> Alto · <strong>Evidencia:</strong> Alto</p>
+              <p>Empaquetar experiencias devocionales con centro histórico, almuerzo típico y recomendaciones de comercio local validado.</p>
+            </article><article class="archetype">
+              <h4>Visitante práctico/logístico</h4>
+              <p><strong>Peso:</strong> Medio · <strong>Evidencia:</strong> Medio</p>
+              <p>Mejorar fichas de Google, páginas de prestadores y piezas oficiales con información práctica, actualizada y fácil de copiar.</p>
+            </article><article class="archetype">
+              <h4>Explorador cultural, patrimonial y de naturaleza suave</h4>
+              <p><strong>Peso:</strong> Medio-bajo actual / alto potencial · <strong>Evidencia:</strong> Medio</p>
+              <p>Convertir patrimonio y naturaleza en productos narrados: rutas autoguiadas, circuitos de medio día y agenda cultural integrada.</p>
+            </article></div>
+            </section><section class="archetype-group">
+              <h3>Honda</h3>
+              <div class="archetype-grid"><article class="archetype">
+              <h4>Visitante de escapada fluvial y patrimonial</h4>
+              <p><strong>Peso:</strong> Alto · <strong>Evidencia:</strong> Alto</p>
+              <p>Construir rutas de medio día y fin de semana alrededor del río, el centro histórico, el Puente Navarro y la memoria del Magdalena.</p>
+            </article><article class="archetype">
+              <h4>Visitante gastronómico con estadía corta</h4>
+              <p><strong>Peso:</strong> Alto · <strong>Evidencia:</strong> Alto</p>
+              <p>Empaquetar cena, hospedaje y recorrido patrimonial corto con información clara de parqueo, clima y tiempos de visita.</p>
+            </article><article class="archetype">
+              <h4>Visitante práctico de decisión digital</h4>
+              <p><strong>Peso:</strong> Medio · <strong>Evidencia:</strong> Medio</p>
+              <p>Mejorar fichas, páginas y piezas oficiales con información práctica actualizada y fácil de encontrar.</p>
+            </article><article class="archetype">
+              <h4>Explorador cultural del Magdalena</h4>
+              <p><strong>Peso:</strong> Medio actual / alto potencial · <strong>Evidencia:</strong> Medio</p>
+              <p>Convertir los activos culturales en productos narrados: ruta del río, ruta del puente, ruta fotográfica y circuito patrimonial.</p>
+            </article></div>
+            </section><section class="archetype-group">
+              <h3>Barichara</h3>
+              <div class="archetype-grid"><article class="archetype">
+              <h4>Escapada patrimonial de descanso</h4>
+              <p><strong>Peso:</strong> Muy alto · <strong>Evidencia:</strong> Alto</p>
+              <p>Empaquetar fines de semana con hospedaje, caminata patrimonial, gastronomía y agenda tranquila.</p>
+            </article><article class="archetype">
+              <h4>Caminante cultural y de naturaleza suave</h4>
+              <p><strong>Peso:</strong> Alto · <strong>Evidencia:</strong> Medio-alto</p>
+              <p>Ordenar rutas por duración, dificultad, clima, transporte y puntos de descanso.</p>
+            </article><article class="archetype">
+              <h4>Viajero que compara alojamiento y acceso</h4>
+              <p><strong>Peso:</strong> Alto · <strong>Evidencia:</strong> Alto</p>
+              <p>Mejorar contenido práctico de hoteles, rutas de llegada, costos aproximados y tiempos desde ciudades emisoras.</p>
+            </article><article class="archetype">
+              <h4>Visitante gastronómico y artesanal</h4>
+              <p><strong>Peso:</strong> Medio-alto · <strong>Evidencia:</strong> Medio</p>
+              <p>Conectar rutas patrimoniales con paradas gastronómicas y compra local de alta calidad.</p>
+            </article></div>
+            </section><section class="archetype-group">
+              <h3>Santa Cruz de Lorica</h3>
+              <div class="archetype-grid"><article class="archetype">
+              <h4>Explorador patrimonial del centro histórico</h4>
+              <p><strong>Peso:</strong> Alto · <strong>Evidencia:</strong> Alto</p>
+              <p>Estructurar una ruta patrimonial caminable con relato del río, mercado, arquitectura y memoria local.</p>
+            </article><article class="archetype">
+              <h4>Visitante gastronómico de mercado y río</h4>
+              <p><strong>Peso:</strong> Alto · <strong>Evidencia:</strong> Alto</p>
+              <p>Crear una ruta de sabores de Lorica conectada con mercado, patrimonio y malecón.</p>
+            </article><article class="archetype">
+              <h4>Visitante regional de escapada corta</h4>
+              <p><strong>Peso:</strong> Medio-alto · <strong>Evidencia:</strong> Medio</p>
+              <p>Promover planes de un día y fin de semana con tiempos, parqueo, restaurantes y puntos fotográficos.</p>
+            </article><article class="archetype">
+              <h4>Explorador de naturaleza y cultura anfibia</h4>
+              <p><strong>Peso:</strong> Medio actual / alto potencial · <strong>Evidencia:</strong> Medio</p>
+              <p>Convertir la naturaleza anfibia y el relato del Sinú en productos interpretativos claros.</p>
+            </article></div>
+            </section>
+    </section>
+  </main>
+  <footer>Generado el 2026-07-21. Fuente: archivos locales consolidados en pilotos/producto_1, producto_2, producto_3, producto_4 y entrega final de Buga.</footer>
+</body>
+</html>
